@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Data.SqlClient;
+using PatientRegistrationApp.Models;
 
 namespace PatientRegistrationApp.DAL
 {
@@ -13,6 +14,9 @@ namespace PatientRegistrationApp.DAL
         {
             // get connection string from environment variable
             string connStr = Environment.GetEnvironmentVariable("DB_CONN_STR");
+
+            // TODO remove this line
+            connStr = @"Data Source = WIN11-THINKPAD\SQLEXPRESS; Initial Catalog = PatientDB; User ID = PatientRegistrationApp; Password = admin1;";
 
             if (string.IsNullOrEmpty(connStr))
             {

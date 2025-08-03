@@ -19,6 +19,7 @@ namespace PatientRegistrationApp.Models
         public string ApartmentNumber { get; set; }
         public string PostalCode { get; set; }
         public string City { get; set; }
+        public string MetaData { get; set; }
         public bool HasCriticalError { get; set; } = false;
         public bool ManuallyOverriden { get; set; } = false;
     }
