@@ -37,18 +37,12 @@ namespace PatientRegistrationApp.DAL
                 {
                     while (reader.Read())
                     {
-                        // validate required fields
-                        var id = (int)reader["Id"];
-                        var firstName = reader["FirstName"] as string;
-                        var lastName = reader["LastName"] as string;
-                        var PESEL = reader["PESEL"] as string;
-
                         var patient = new Patient
                         {
-                            Id = id,
-                            FirstName = firstName ?? "???",
-                            LastName = lastName ?? "???",
-                            PESEL = PESEL ?? "???",
+                            Id = (int)reader["Id"],
+                            FirstName = reader["FirstName"].ToString(),
+                            LastName = reader["LastName"].ToString(),
+                            PESEL = reader["PESEL"].ToString(),
                             Phone = reader["Phone"] as string,
                             Email = reader["Email"] as string,
                             Street = reader["Street"] as string,
@@ -65,7 +59,58 @@ namespace PatientRegistrationApp.DAL
 
             return patients;
         }
-        public Patient GetPatientById(int id)
+        public Patient GetPatientById(string id)
+        {
+            using (var conn = Db.GetConnection())
+            {
+                conn.Open();
+                string query = @"SELECT
+                                    Id,
+                                    FirstName,
+                                    LastName,
+                                    PESEL,
+                                    Phone,
+                                    Email,
+                                    Street,
+                                    BuildingNumber,
+                                    ApartmentNumber,
+                                    PostalCode,
+                                    City,
+                                    MetaData
+                                FROM Patients
+                                WHERE Id = @id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            return new Patient
+                            {
+                                Id = (int)reader["Id"],
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                PESEL = reader["PESEL"].ToString(),
+                                Phone = reader["Phone"] as string,
+                                Email = reader["Email"] as string,
+                                Street = reader["Street"] as string,
+                                BuildingNumber = reader["BuildingNumber"] as string,
+                                ApartmentNumber = reader["ApartmentNumber"] as string,
+                                PostalCode = reader["PostalCode"] as string,
+                                City = reader["City"] as string,
+                                MetaData = reader["MetaData"] as string,
+                            };
+                        }
+                    }
+                }
+
+                return null;
+            }
+        }
+        public Patient GetPatientByPESEL(string pesel)
         {
             using (var conn = Db.GetConnection())
             {
@@ -84,26 +129,22 @@ namespace PatientRegistrationApp.DAL
                             City,
                             MetaData
                         FROM Patients 
-                        WHERE Id = @Id";
+                        WHERE PESEL = @pesel";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.Parameters.AddWithValue("@pesel", pesel);
 
                     using (var reader = cmd.ExecuteReader())
                     {
                         if (reader.Read())
                         {
-                            var firstName = reader["FirstName"] as string;
-                            var lastName = reader["LastName"] as string;
-                            var PESEL = reader["PESEL"] as string;
-
                             return new Patient
                             {
                                 Id = (int)reader["Id"],
-                                FirstName = firstName ?? "???",
-                                LastName = lastName ?? "???",
-                                PESEL = PESEL ?? "???",
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                PESEL = reader["PESEL"].ToString(),
                                 Phone = reader["Phone"] as string,
                                 Email = reader["Email"] as string,
                                 Street = reader["Street"] as string,
@@ -148,7 +189,7 @@ namespace PatientRegistrationApp.DAL
                     cmd.Parameters.AddWithValue("@MetaData", patient.MetaData ?? (object)DBNull.Value);
 
                     var rowsAffected = cmd.ExecuteNonQuery();
-                    
+
                     return rowsAffected > 0;
                 }
             }
@@ -192,7 +233,7 @@ namespace PatientRegistrationApp.DAL
                 }
             }
         }
-        public bool DeletePatient(int id)
+        public bool DeletePatient(int patientId)
         {
             using (var conn = Db.GetConnection())
             {
@@ -201,7 +242,7 @@ namespace PatientRegistrationApp.DAL
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Id", id);
+                    cmd.Parameters.AddWithValue("@Id", patientId);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
                     return rowsAffected > 0;

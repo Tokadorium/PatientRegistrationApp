@@ -41,7 +41,7 @@ namespace PatientRegistrationApp.BLL
 
             if (pesel.Length != 11 || !pesel.All(char.IsDigit))
             {
-                errorMessage = "PESEL must consist of excatly 11 digits";
+                errorMessage = "PESEL must consist of exactly 11 digits";
                 return false;
             }
 

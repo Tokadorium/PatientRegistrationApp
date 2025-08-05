@@ -15,13 +15,8 @@ namespace PatientRegistrationApp.Forms
 {
     public partial class LoginForm : Form
     {
-        private const int MAX_FAILED = 5;
-        private const int SHOW_RESET_LINK_AFTER = 2;
-
-        private int failedAttempts = 0;
-        private DateTime lockoutUntil = DateTime.MinValue;
-
         public User LoggedUser { get; private set; }
+        private int timesTried = 0;
 
         public LoginForm()
         {
@@ -35,7 +30,7 @@ namespace PatientRegistrationApp.Forms
 
         private void lblPassword_Click(object sender, EventArgs e)
         {
-
+            // logic to reset a password
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -51,59 +46,41 @@ namespace PatientRegistrationApp.Forms
                 string username = txtUsername.Text;
                 string password = txtPassword.Text;
 
-                if (DateTime.UtcNow < lockoutUntil)
-                {
-                    MessageBox.Show($"Too many failed attempts. Try again after {lockoutUntil.ToLocalTime():T}.");
-                    return;
-                }
-
                 if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
                 {
-                    MessageBox.Show("Invalid credentials.");
+                    MessageBox.Show("Username and password cannot be empty.");
                     return;
                 }
 
-                var user = AuthService.TryLogin(username, password);
+                LoggedUser = AuthService.TryLogin(username, password, out string loginErrorMessage);
 
-                if (user == null)
+                if (LoggedUser == null)
                 {
-                    failedAttempts++;
-
-                    if (failedAttempts >= MAX_FAILED)
-                    {
-                        // TODO THIS IS IMPORTANT!!!
-                        // god i just realized that this is a terrible way to handle lockouts
-                        // i definately WILL remember to handle it via database later
-                        lockoutUntil = DateTime.UtcNow.AddMinutes(1);
-                        failedAttempts = 0;
-                    }
-
-                    MessageBox.Show("Invalid credentials.");
-
-                    if (failedAttempts >= SHOW_RESET_LINK_AFTER)
-                        lnkForgotPassword.Visible = true;
-
+                    timesTried++;
+                    if (timesTried >= 3) lnkForgotPassword.Visible = true;
+                    MessageBox.Show(loginErrorMessage);
                     return;
                 }
 
-                LoggedUser = user;
+                // successful login
                 this.DialogResult = DialogResult.OK;
                 this.Close();
             }
-            catch (Exception ex)
+            catch
             {
                 MessageBox.Show("Unexpected error occurred.");
-
-                // potentially log the exception to a file later
             }
             finally
             {
-                lnkForgotPassword.Visible = false;
-
                 txtUsername.Clear();
                 txtPassword.Clear();
                 txtUsername.Focus();
             }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }
