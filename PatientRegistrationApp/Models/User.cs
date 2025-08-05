@@ -16,6 +16,7 @@ namespace PatientRegistrationApp.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public int FailedAttempts { get; set; }
+        public string UserRole { get; set; }
 
         // nullable fields
         public DateTime? LockedUntil { get; set; }

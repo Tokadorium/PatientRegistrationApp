@@ -24,7 +24,8 @@ namespace PatientRegistrationApp.DAL
                                     Email,
                                     MetaData,
                                     FailedAttempts,
-                                    LockedUntil
+                                    LockedUntil,
+                                    UserRole
                                  FROM Users
                                  WHERE Username = @username";
 
@@ -46,6 +47,7 @@ namespace PatientRegistrationApp.DAL
                                 Email = reader["Email"].ToString(),
                                 MetaData = reader["MetaData"] as string,
                                 FailedAttempts = (int)reader["FailedAttempts"],
+                                UserRole = reader["UserRole"] as string,
                                 LockedUntil = reader["LockedUntil"] == DBNull.Value ? null : (DateTime?)reader["LockedUntil"]
                             };
                         }
@@ -69,7 +71,8 @@ namespace PatientRegistrationApp.DAL
                                     Email,
                                     MetaData,
                                     FailedAttempts,
-                                    LockedUntil
+                                    LockedUntil,
+                                    UserRole    
                                  FROM Users
                                  WHERE Id = @id";
 
@@ -91,6 +94,7 @@ namespace PatientRegistrationApp.DAL
                                 Email = reader["Email"].ToString(),
                                 MetaData = reader["MetaData"] as string,
                                 FailedAttempts = (int)reader["FailedAttempts"],
+                                UserRole = reader["UserRole"] as string,
                                 LockedUntil = reader["LockedUntil"] == DBNull.Value ? null : (DateTime?)reader["LockedUntil"]
                             };
                         }
@@ -107,7 +111,7 @@ namespace PatientRegistrationApp.DAL
                 conn.Open();
                 string query = @"
                     INSERT INTO Users 
-                        (Username, PasswordHash, FirstName, LastName, Email, MetaData, FailedAttempts, LockedUntil)
+                        (Username, PasswordHash, FirstName, LastName, Email, MetaData, FailedAttempts, LockedUntil, UserRole)
                     VALUES 
                         (@Username, @PasswordHash, @FirstName, @LastName, @Email, @MetaData, @FailedAttempts, @LockedUntil)";
 
@@ -120,6 +124,7 @@ namespace PatientRegistrationApp.DAL
                     cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@MetaData", user.MetaData ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@FailedAttempts", user.FailedAttempts);
+                    cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@LockedUntil", user.LockedUntil ?? (object)DBNull.Value);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -140,7 +145,8 @@ namespace PatientRegistrationApp.DAL
                         Email = @Email,
                         MetaData = @MetaData,
                         FailedAttempts = @FailedAttempts,
-                        LockedUntil = @LockedUntil
+                        LockedUntil = @LockedUntil,
+                        UserRole = @UserRole
                     WHERE Id = @Id";
 
                 using (var cmd = new SqlCommand(query, conn))
@@ -152,6 +158,7 @@ namespace PatientRegistrationApp.DAL
                     cmd.Parameters.AddWithValue("@MetaData", user.MetaData ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@FailedAttempts", user.FailedAttempts);
                     cmd.Parameters.AddWithValue("@LockedUntil", user.LockedUntil ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Id", user.Id);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
