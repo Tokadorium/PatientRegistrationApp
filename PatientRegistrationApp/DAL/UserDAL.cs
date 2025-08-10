@@ -24,8 +24,7 @@ namespace PatientRegistrationApp.DAL
                                     Email,
                                     MetaData,
                                     FailedAttempts,
-                                    LockedUntil,
-                                    UserRole
+                                    LockedUntil
                                  FROM Users
                                  WHERE Username = @username";
 
@@ -47,7 +46,7 @@ namespace PatientRegistrationApp.DAL
                                 Email = reader["Email"].ToString(),
                                 MetaData = reader["MetaData"] as string,
                                 FailedAttempts = (int)reader["FailedAttempts"],
-                                UserRole = reader["UserRole"] as string,
+                                // UserRole = reader["UserRole"] as string,
                                 LockedUntil = reader["LockedUntil"] == DBNull.Value ? null : (DateTime?)reader["LockedUntil"]
                             };
                         }
@@ -71,8 +70,7 @@ namespace PatientRegistrationApp.DAL
                                     Email,
                                     MetaData,
                                     FailedAttempts,
-                                    LockedUntil,
-                                    UserRole    
+                                    LockedUntil
                                  FROM Users
                                  WHERE Id = @id";
 
@@ -94,7 +92,7 @@ namespace PatientRegistrationApp.DAL
                                 Email = reader["Email"].ToString(),
                                 MetaData = reader["MetaData"] as string,
                                 FailedAttempts = (int)reader["FailedAttempts"],
-                                UserRole = reader["UserRole"] as string,
+                                // UserRole = reader["UserRole"] as string,
                                 LockedUntil = reader["LockedUntil"] == DBNull.Value ? null : (DateTime?)reader["LockedUntil"]
                             };
                         }
@@ -104,6 +102,24 @@ namespace PatientRegistrationApp.DAL
 
             return null;
         }
+        public string GetUserRole(int id)
+        {
+            using (var conn = Db.GetConnection())
+            {
+                conn.Open();
+                string query = @"SELECT UserRole FROM Users WHERE Id = @id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var roleObj = cmd.ExecuteScalar();
+
+                    // place to use some auth service to pull the role and immidiately
+                    // encrypt it
+                    return roleObj?.ToString();
+                }
+            }
+        }
         public bool CreateUser(User user)
         {
             using (var conn = Db.GetConnection())
@@ -111,7 +127,7 @@ namespace PatientRegistrationApp.DAL
                 conn.Open();
                 string query = @"
                     INSERT INTO Users 
-                        (Username, PasswordHash, FirstName, LastName, Email, MetaData, FailedAttempts, LockedUntil, UserRole)
+                        (Username, PasswordHash, FirstName, LastName, Email, MetaData, FailedAttempts, LockedUntil)
                     VALUES 
                         (@Username, @PasswordHash, @FirstName, @LastName, @Email, @MetaData, @FailedAttempts, @LockedUntil)";
 
@@ -124,7 +140,7 @@ namespace PatientRegistrationApp.DAL
                     cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@MetaData", user.MetaData ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@FailedAttempts", user.FailedAttempts);
-                    cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
+                    // cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@LockedUntil", user.LockedUntil ?? (object)DBNull.Value);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -145,8 +161,7 @@ namespace PatientRegistrationApp.DAL
                         Email = @Email,
                         MetaData = @MetaData,
                         FailedAttempts = @FailedAttempts,
-                        LockedUntil = @LockedUntil,
-                        UserRole = @UserRole
+                        LockedUntil = @LockedUntil
                     WHERE Id = @Id";
 
                 using (var cmd = new SqlCommand(query, conn))
@@ -158,7 +173,7 @@ namespace PatientRegistrationApp.DAL
                     cmd.Parameters.AddWithValue("@MetaData", user.MetaData ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@FailedAttempts", user.FailedAttempts);
                     cmd.Parameters.AddWithValue("@LockedUntil", user.LockedUntil ?? (object)DBNull.Value);
-                    cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
+                    // cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@Id", user.Id);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
@@ -182,5 +197,40 @@ namespace PatientRegistrationApp.DAL
                 }
             }
         }
+        // yeah it doesnt do much in client only architecture but just to nurture the habit
+        // i could sort of "reverse hash" the role to make it harder to find in RAM though
+        public bool UserHasPermission(int userId, string requiredRole)
+        {
+            // hierarchy lowest to highest
+            var roleHierarchy = new List<string> { "User", "Manager", "Admin" };
+
+            using (var conn = Db.GetConnection())
+            {
+                conn.Open();
+                string query = @"SELECT UserRole FROM Users WHERE Id = @Id";
+
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Id", userId);
+
+                    var userRoleObj = cmd.ExecuteScalar();
+                    if (userRoleObj == null)
+                        return false;
+
+                    string userRole = userRoleObj.ToString();
+
+                    int userRoleIndex = roleHierarchy.IndexOf(userRole);
+                    int requiredRoleIndex = roleHierarchy.IndexOf(requiredRole);
+
+                    // if either role is not found
+                    if (userRoleIndex == -1 || requiredRoleIndex == -1)
+                        return false;
+
+                    // ok if user has equal or higher role
+                    return userRoleIndex >= requiredRoleIndex;
+                }
+            }
+        }
+
     }
 }

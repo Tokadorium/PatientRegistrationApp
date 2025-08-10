@@ -14,6 +14,9 @@ namespace PatientRegistrationApp.BLL
         {
             var dal = new UserDAL();
             var user = dal.GetByUsername(username);
+
+            user.UserRole = dal.GetUserRole(user.Id);
+
             errorMessage = null;
 
             if (user == null)

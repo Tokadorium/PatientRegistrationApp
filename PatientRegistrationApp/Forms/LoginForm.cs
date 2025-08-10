@@ -27,21 +27,15 @@ namespace PatientRegistrationApp.Forms
         {
 
         }
-
         private void lblPassword_Click(object sender, EventArgs e)
         {
             // logic to reset a password
         }
-
         private void btnLogin_Click(object sender, EventArgs e)
         {
             try
             {
                 lnkForgotPassword.Visible = false;
-
-                // no spaces in username and password
-                txtUsername.Text = txtUsername.Text.Trim();
-                txtPassword.Text = txtPassword.Text.Trim();
 
                 string username = txtUsername.Text;
                 string password = txtPassword.Text;
@@ -77,7 +71,6 @@ namespace PatientRegistrationApp.Forms
                 txtUsername.Focus();
             }
         }
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();

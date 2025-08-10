@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using PatientRegistrationApp.Forms;
+using PatientRegistrationApp.Tests;
 
 namespace PatientRegistrationApp
 {
@@ -17,6 +18,8 @@ namespace PatientRegistrationApp
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            //Tests.PatientSeeder.SeedPatients(3000);
 
             using (var loginForm = new LoginForm())
             {

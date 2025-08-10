@@ -11,17 +11,31 @@ namespace PatientRegistrationApp.BLL
 {
     public static class PatientValidator
     {
-        public class ValidationMessages
+        public class ParsingMessages
         {
-            public bool IsValid => Errors.Count == 0;
-            public List<string> Errors { get; } = new List<string>();
+            public Dictionary<string, string> Errors { get; } = new Dictionary<string, string>();
 
-            // TODO rewrite AddError method if later using something other than list to store errors
-            public void AddError(string errorMessage)
+            public bool IsValid => Errors.Count == 0;
+
+            public void AddError(string field, string errorMessage)
             {
-                Errors.Add(errorMessage);
+                if (!Errors.ContainsKey(field))
+                    Errors[field] = errorMessage;
             }
         }
+        public class ValidationMessages
+        {
+            public Dictionary<string, string> groupedErrors { get; } = new Dictionary<string, string>();
+
+            public bool IsValid => groupedErrors.Count == 0;
+
+            public void AddError(string field, string errorMessage)
+            {
+                if (!groupedErrors.ContainsKey(field))
+                    groupedErrors[field] = errorMessage;
+            }
+        }
+
         private static string NormalizeName(string name)
         {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.Trim().ToLower());
@@ -186,97 +200,106 @@ namespace PatientRegistrationApp.BLL
             normalized = $"{match.Groups[1].Value}-{match.Groups[2].Value}";
             return true;
         }
-        public static Patient TryParsePatient(Patient patient, out ValidationMessages errorMessages)
+        public static Patient TryParsePatient(Patient patient, out ParsingMessages errorMessages)
         {
-            var result = new ValidationMessages();
+            var result = new ParsingMessages();
             Patient normalized = new Patient();
 
             // name
             if (string.IsNullOrWhiteSpace(patient.FirstName))
-                result.AddError("Name field is empty");
+                result.AddError("FirstName", "Name field is empty");
             else
                 normalized.FirstName = NormalizeName(patient.FirstName);
 
             // last name
             if (string.IsNullOrWhiteSpace(patient.LastName))
-                result.AddError("Last name field is empty");
+                result.AddError("LastName", "Last name field is empty");
             else
                 normalized.LastName = NormalizeName(patient.LastName);
 
             // PESEL
             if (!TryParsePesel(patient.PESEL, out string normalizedPesel, out string peselError))
-                result.AddError(peselError);
+                result.AddError("PESEL", peselError);
             else
                 normalized.PESEL = normalizedPesel;
 
             // phone
             if (!TryParsePhone(patient.Phone, out string normalizedPhone, out string phoneError))
-                result.AddError(phoneError);
+                result.AddError("Phone", phoneError);
             else
                 normalized.Phone = normalizedPhone;
 
             // email
             if (!TryParseEmail(patient.Email, out string normalizedEmail, out string emailError))
-                result.AddError(emailError);
+                result.AddError("Email", emailError);
             else
                 normalized.Email = normalizedEmail;
 
             // street
             if (string.IsNullOrWhiteSpace(patient.Street))
-                result.AddError("Street field is empty");
+                result.AddError("Street", "Street field is empty");
             else
                 normalized.Street = NormalizeName(patient.Street);
 
             // building number
             if (string.IsNullOrWhiteSpace(patient.BuildingNumber))
-                result.AddError("Building field is empty");
+                result.AddError("BuildingNumber", "Building field is empty");
             else
                 normalized.BuildingNumber = patient.BuildingNumber.Trim();
 
             // apartment number
             if (string.IsNullOrWhiteSpace(patient.ApartmentNumber))
-                result.AddError("Apartment field is empty");
+                result.AddError("ApartmentNumber", "Apartment field is empty");
             else
                 normalized.ApartmentNumber = patient.ApartmentNumber.Trim();
 
             // postal code
-            if (!TryParsePostalCode(patient.PostalCode, out string  normalizedPostalCode, out string postalCodeError))
-                result.AddError(postalCodeError);
+            if (!TryParsePostalCode(patient.PostalCode, out string normalizedPostalCode, out string postalCodeError))
+                result.AddError("PostalCode", postalCodeError);
             else
                 normalized.PostalCode = normalizedPostalCode;
 
             // city
             if (string.IsNullOrWhiteSpace(patient.City))
-                result.AddError("City field is empty");
+                result.AddError("City", "City field is empty");
             else
                 normalized.City = NormalizeName(patient.City);
 
             errorMessages = result;
             return normalized;
         }
-        public static bool ValidatePatient(Patient patient, out ValidationMessages errorMessages)
+        public static bool ValidatePatient(Patient patient, out Patient validatedPatient, out ValidationMessages errorMessages)
         {
-            Patient parsed = TryParsePatient(patient, out ValidationMessages patientErrors);
-            // idk if i will use messages but why not have them
-            errorMessages = patientErrors;
+            errorMessages = new ValidationMessages();
+            validatedPatient = null;
 
             // always required fields
-            if (parsed.FirstName == null ||
-                parsed.LastName == null ||
-                parsed.PESEL == null)
-                return false;
-
-            // require either phone or email
-            if (parsed.Phone == null && parsed.Email == null)
-                return false;
-
-            // IF address is given then require it to be filled properly,
-            if (parsed.City != null)
+            if (patient.FirstName == null ||
+                patient.LastName == null ||
+                patient.PESEL == null)
             {
-                if (parsed.PostalCode == null || parsed.BuildingNumber == null)
-                    return false;
+                errorMessages.AddError("group1", "First name, last name and PESEL are required fields.");
             }
 
+            // require either phone or email
+            if (patient.Phone == null && patient.Email == null)
+            {
+                errorMessages.AddError("group2", "Either phone or email must be provided.");
+            }
+
+            // IF address is given then require it to be filled properly,
+            if (patient.City != null)
+            {
+                if (patient.PostalCode == null || patient.BuildingNumber == null)
+                {
+                    errorMessages.AddError("group3", "Address should contain at least postal code and building number.");
+                }
+            }
+
+            if (!errorMessages.IsValid)
+                return false;
+
+            validatedPatient = patient;
             return true;
         }
     }

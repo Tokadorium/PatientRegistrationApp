@@ -249,5 +249,45 @@ namespace PatientRegistrationApp.DAL
                 }
             }
         }
+        public List<Patient> GetPatientsPage(int offset, int count)
+        {
+            var patients = new List<Patient>();
+            using (var conn = Db.GetConnection())
+            {
+                conn.Open();
+                string query = $@"
+                    SELECT Id, FirstName, LastName, PESEL, Phone, Email, Street, BuildingNumber, ApartmentNumber, PostalCode, City
+                    FROM Patients
+                    ORDER BY Id
+                    OFFSET @offset ROWS FETCH NEXT @count ROWS ONLY";
+                using (var cmd = new SqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@offset", offset);
+                    cmd.Parameters.AddWithValue("@count", count);
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            var patient = new Patient
+                            {
+                                Id = (int)reader["Id"],
+                                FirstName = reader["FirstName"].ToString(),
+                                LastName = reader["LastName"].ToString(),
+                                PESEL = reader["PESEL"].ToString(),
+                                Phone = reader["Phone"] as string,
+                                Email = reader["Email"] as string,
+                                Street = reader["Street"] as string,
+                                BuildingNumber = reader["BuildingNumber"] as string,
+                                ApartmentNumber = reader["ApartmentNumber"] as string,
+                                PostalCode = reader["PostalCode"] as string,
+                                City = reader["City"] as string,
+                            };
+                            patients.Add(patient);
+                        }
+                    }
+                }
+            }
+            return patients;
+        }
     }
 }
