@@ -46,7 +46,7 @@
             // lblWelcome
             // 
             this.lblWelcome.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblWelcome.Location = new System.Drawing.Point(620, 9);
+            this.lblWelcome.Location = new System.Drawing.Point(1004, 9);
             this.lblWelcome.Name = "lblWelcome";
             this.lblWelcome.Size = new System.Drawing.Size(168, 14);
             this.lblWelcome.TabIndex = 0;
@@ -55,15 +55,16 @@
             // 
             // dgvPatients
             // 
+            this.dgvPatients.AllowUserToOrderColumns = true;
             this.dgvPatients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvPatients.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.AllCells;
+            this.dgvPatients.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvPatients.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvPatients.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgvPatients.Location = new System.Drawing.Point(12, 32);
             this.dgvPatients.Name = "dgvPatients";
-            this.dgvPatients.Size = new System.Drawing.Size(776, 406);
+            this.dgvPatients.Size = new System.Drawing.Size(1160, 317);
             this.dgvPatients.TabIndex = 1;
             this.dgvPatients.Scroll += new System.Windows.Forms.ScrollEventHandler(this.dgvPatients_Scroll);
             // 
@@ -143,7 +144,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(1184, 361);
             this.Controls.Add(this.dgvPatients);
             this.Controls.Add(this.lblWelcome);
             this.Controls.Add(this.menuStrip1);

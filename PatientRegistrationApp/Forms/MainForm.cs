@@ -16,10 +16,10 @@ namespace PatientRegistrationApp.Forms
     public partial class MainForm : Form
     {
         private User LoggedUser { get; set; }
-
-        private int CurrentPageOffset = 0;
-        private const int PageSize = 1000;
+        private int CurrentOffset = 0;
+        private const int PageSize = 200;
         private BindingList<Patient> CurrentPatientsPage;
+        private HashSet<int> LoadedPages = new HashSet<int>();
 
         public MainForm(User loggedUser)
         {
@@ -32,25 +32,22 @@ namespace PatientRegistrationApp.Forms
             lblWelcome.Text = $"Welcome, {LoggedUser.FirstName}!";
             
             var patientDAL = new PatientDAL();
-            CurrentPatientsPage = new BindingList<Patient>(patientDAL.GetPatientsPage(CurrentPageOffset, PageSize));
+            CurrentPatientsPage = new BindingList<Patient>(patientDAL.GetPatientsPage(CurrentOffset, PageSize));
             dgvPatients.DataSource = CurrentPatientsPage;
         }
         private void dgvPatients_Scroll(object sender, ScrollEventArgs e)
         {
 
         }
-
         private void refreshViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
-
         private void addPatientToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddPatientForm addPatientForm = new AddPatientForm(LoggedUser);
             addPatientForm.Show();
         }
-
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Restart();
