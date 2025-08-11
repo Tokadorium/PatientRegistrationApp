@@ -88,8 +88,14 @@ namespace PatientRegistrationApp.Forms
         {
             if (dgvPatients.CurrentRow != null && dgvPatients.CurrentRow.DataBoundItem is Patient selectedPatient)
             {
-                EditUserForm editForm = new EditUserForm(LoggedUser, selectedPatient);
-                editForm.Show();
+                using (EditPatientForm editForm = new EditPatientForm(LoggedUser, selectedPatient))
+                {
+                    if (editForm.ShowDialog() == DialogResult.OK)
+                    {
+                        CurrentPatientsPage = new BindingList<Patient>(Dal.GetAllPatients());
+                        dgvPatients.DataSource = CurrentPatientsPage;
+                    }
+                }
             }
             else
             {

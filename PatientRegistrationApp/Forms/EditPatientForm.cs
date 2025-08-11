@@ -7,7 +7,7 @@ using PatientRegistrationApp.Models;
 
 namespace PatientRegistrationApp.Forms
 {
-    public partial class EditUserForm : Form
+    public partial class EditPatientForm : Form
     {
         private User LoggedUser;
         private Patient Patient;
@@ -15,7 +15,7 @@ namespace PatientRegistrationApp.Forms
         private Dictionary<string, TextBox> fieldMapping;
         private ErrorProvider errorProvider = new ErrorProvider();
 
-        public EditUserForm(User loggedUser, Patient patient)
+        public EditPatientForm(User loggedUser, Patient patient)
         {
             InitializeComponent();
             Patient = patient;

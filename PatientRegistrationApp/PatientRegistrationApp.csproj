@@ -70,11 +70,11 @@
     <Compile Include="Forms\ConfirmPatientForm.Designer.cs">
       <DependentUpon>ConfirmPatientForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\EditUserForm.cs">
+    <Compile Include="Forms\EditPatientForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\EditUserForm.Designer.cs">
-      <DependentUpon>EditUserForm.cs</DependentUpon>
+    <Compile Include="Forms\EditPatientForm.Designer.cs">
+      <DependentUpon>EditPatientForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\LoginForm.cs">
       <SubType>Form</SubType>
@@ -108,8 +108,8 @@
     <EmbeddedResource Include="Forms\ConfirmPatientForm.resx">
       <DependentUpon>ConfirmPatientForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\EditUserForm.resx">
-      <DependentUpon>EditUserForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\EditPatientForm.resx">
+      <DependentUpon>EditPatientForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoginForm.resx">
       <DependentUpon>LoginForm.cs</DependentUpon>

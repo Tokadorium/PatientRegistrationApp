@@ -1,6 +1,6 @@
 ﻿namespace PatientRegistrationApp.Forms
 {
-    partial class EditUserForm
+    partial class EditPatientForm
     {
         /// <summary>
         /// Required designer variable.
@@ -232,7 +232,7 @@
             this.lblFirstName.TabIndex = 22;
             this.lblFirstName.Text = "First Name:";
             // 
-            // EditUserForm
+            // EditPatientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -259,7 +259,8 @@
             this.Controls.Add(this.lblLastName);
             this.Controls.Add(this.txtFirstName);
             this.Controls.Add(this.lblFirstName);
-            this.Name = "EditUserForm";
+            this.Name = "EditPatientForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "EditUserForm";
             this.ResumeLayout(false);
             this.PerformLayout();

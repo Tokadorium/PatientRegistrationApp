@@ -260,6 +260,7 @@
             this.Controls.Add(this.txtFirstName);
             this.Controls.Add(this.lblFirstName);
             this.Name = "SearchPatientForm";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SearchPatientForm";
             this.ResumeLayout(false);
             this.PerformLayout();

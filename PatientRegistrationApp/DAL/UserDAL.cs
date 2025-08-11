@@ -197,7 +197,7 @@ namespace PatientRegistrationApp.DAL
                 }
             }
         }
-        // yeah it doesnt do much in client only architecture but just to nurture the habit
+        // yeah it doesnt do much in client only architecture
         // i could sort of "reverse hash" the role to make it harder to find in RAM though
         public bool UserHasPermission(int userId, string requiredRole)
         {

@@ -205,6 +205,8 @@ namespace PatientRegistrationApp.BLL
             var result = new ParsingMessages();
             Patient normalized = new Patient();
 
+            normalized.Id = patient.Id;
+
             // name
             if (string.IsNullOrWhiteSpace(patient.FirstName))
                 result.AddError("FirstName", "Name field is empty");
@@ -287,9 +289,20 @@ namespace PatientRegistrationApp.BLL
                 errorMessages.AddError("group2", "Either phone or email must be provided.");
             }
 
-            // IF address is given then require it to be filled properly,
-            if (patient.City != null)
+            // IF city is not filled, none of the address fields should be filled
+            if (string.IsNullOrWhiteSpace(patient.City))
             {
+                if (!string.IsNullOrWhiteSpace(patient.Street) ||
+                    !string.IsNullOrWhiteSpace(patient.BuildingNumber) ||
+                    !string.IsNullOrWhiteSpace(patient.ApartmentNumber) ||
+                    !string.IsNullOrWhiteSpace(patient.PostalCode))
+                {
+                    errorMessages.AddError("group3", "If City is not filled, Street, Building Number, Apartment Number, and Postal Code must also be empty.");
+                }
+            }
+            else
+            {
+                // IF address is given then require it to be filled properly
                 if (patient.PostalCode == null || patient.BuildingNumber == null)
                 {
                     errorMessages.AddError("group3", "Address should contain at least postal code and building number.");
