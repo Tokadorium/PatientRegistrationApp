@@ -14,12 +14,14 @@ namespace PatientRegistrationApp.Forms
         private TextBox[] textBoxes;
         private Dictionary<string, TextBox> fieldMapping;
         private ErrorProvider errorProvider = new ErrorProvider();
+        private DataGridView DataGridView;
 
-        public EditPatientForm(User loggedUser, Patient patient)
+        public EditPatientForm(User loggedUser, DataGridView dataGridView, Patient patient)
         {
             InitializeComponent();
             Patient = patient;
             LoggedUser = loggedUser;
+            DataGridView = dataGridView;
             mapTextBoxes();
             PopulateFields();
         }
@@ -146,8 +148,20 @@ namespace PatientRegistrationApp.Forms
 
             if (userDAL.UserHasPermission(LoggedUser.Id, "User") && patientDAL.UpdatePatient(validatedPatient))
             {
-                MessageBox.Show("Patient updated successfully.");
                 this.DialogResult = DialogResult.OK;
+                if (DataGridView.CurrentRow != null)
+                {
+                    DataGridView.CurrentRow.Cells["FirstName"].Value = validatedPatient.FirstName;
+                    DataGridView.CurrentRow.Cells["LastName"].Value = validatedPatient.LastName;
+                    DataGridView.CurrentRow.Cells["PESEL"].Value = validatedPatient.PESEL;
+                    DataGridView.CurrentRow.Cells["Phone"].Value = validatedPatient.Phone;
+                    DataGridView.CurrentRow.Cells["Email"].Value = validatedPatient.Email;
+                    DataGridView.CurrentRow.Cells["Street"].Value = validatedPatient.Street;
+                    DataGridView.CurrentRow.Cells["BuildingNumber"].Value = validatedPatient.BuildingNumber;
+                    DataGridView.CurrentRow.Cells["ApartmentNumber"].Value = validatedPatient.ApartmentNumber;
+                    DataGridView.CurrentRow.Cells["PostalCode"].Value = validatedPatient.PostalCode;
+                    DataGridView.CurrentRow.Cells["City"].Value = validatedPatient.City;
+                }
                 this.Close();
             }
             else

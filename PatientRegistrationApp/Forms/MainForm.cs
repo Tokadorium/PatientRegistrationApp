@@ -21,6 +21,8 @@ namespace PatientRegistrationApp.Forms
         private BindingList<Patient> CurrentPatientsPage;
         private HashSet<int> LoadedPages = new HashSet<int>();
 
+        private bool IsFiltered = false;
+
         public MainForm(User loggedUser)
         {
             InitializeComponent();
@@ -59,10 +61,9 @@ namespace PatientRegistrationApp.Forms
         {
             lblWelcome.Text = $"Welcome, {LoggedUser.FirstName}!";
 
-
-            //CurrentPatientsPage = new BindingList<Patient>(Dal.GetPatientsPage(0, PageSize));
             CurrentPatientsPage = new BindingList<Patient>(Dal.GetAllPatients());
             dgvPatients.DataSource = CurrentPatientsPage;
+            clearSearchResultsToolStripMenuItem.Enabled = false;
         }
         private void dgvPatients_Scroll(object sender, ScrollEventArgs e)
         {
@@ -80,20 +81,33 @@ namespace PatientRegistrationApp.Forms
 
         private void searchPatientToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SearchPatientForm searchPatientForm = new SearchPatientForm(dgvPatients);
-            searchPatientForm.Show();
+            using (SearchPatientForm searchPatientForm = new SearchPatientForm(dgvPatients))
+            {
+                searchPatientForm.ShowDialog();
+
+                var allPatients = Dal.GetAllPatients();
+                if (dgvPatients.Rows.Count < allPatients.Count)
+                {
+                    IsFiltered = true;
+                    clearSearchResultsToolStripMenuItem.Enabled = true;
+                }
+                else
+                {
+                    IsFiltered = false;
+                    clearSearchResultsToolStripMenuItem.Enabled = false;
+                }
+            }
         }
 
         private void editPatientToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (dgvPatients.CurrentRow != null && dgvPatients.CurrentRow.DataBoundItem is Patient selectedPatient)
             {
-                using (EditPatientForm editForm = new EditPatientForm(LoggedUser, selectedPatient))
+                using (EditPatientForm editForm = new EditPatientForm(LoggedUser, dgvPatients, selectedPatient))
                 {
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
-                        CurrentPatientsPage = new BindingList<Patient>(Dal.GetAllPatients());
-                        dgvPatients.DataSource = CurrentPatientsPage;
+                        MessageBox.Show("Patient updated successfully.");
                     }
                 }
             }
@@ -101,6 +115,14 @@ namespace PatientRegistrationApp.Forms
             {
                 MessageBox.Show("Please select a patient to edit.");
             }
+        }
+
+        private void clearSearchResultsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CurrentPatientsPage = new BindingList<Patient>(Dal.GetAllPatients());
+            dgvPatients.DataSource = CurrentPatientsPage;
+            IsFiltered = false;
+            clearSearchResultsToolStripMenuItem.Enabled = false;
         }
     }
 }

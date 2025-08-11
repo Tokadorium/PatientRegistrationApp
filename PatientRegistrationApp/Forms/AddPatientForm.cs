@@ -153,8 +153,9 @@ namespace PatientRegistrationApp.Forms
                 MessageBox.Show("Failed to add patient.");
             }
         }
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
+            this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
     }

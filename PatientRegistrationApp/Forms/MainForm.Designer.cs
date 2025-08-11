@@ -38,6 +38,7 @@
             this.deletePatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.systemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearSearchResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPatients)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -84,6 +85,7 @@
             // 
             this.patientsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.searchPatientToolStripMenuItem,
+            this.clearSearchResultsToolStripMenuItem,
             this.editPatientToolStripMenuItem,
             this.addPatientToolStripMenuItem,
             this.deletePatientToolStripMenuItem});
@@ -133,6 +135,13 @@
             this.logOutToolStripMenuItem.Text = "Log out";
             this.logOutToolStripMenuItem.Click += new System.EventHandler(this.logOutToolStripMenuItem_Click);
             // 
+            // clearSearchResultsToolStripMenuItem
+            // 
+            this.clearSearchResultsToolStripMenuItem.Name = "clearSearchResultsToolStripMenuItem";
+            this.clearSearchResultsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearSearchResultsToolStripMenuItem.Text = "Clear search results";
+            this.clearSearchResultsToolStripMenuItem.Click += new System.EventHandler(this.clearSearchResultsToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -167,5 +176,6 @@
         private System.Windows.Forms.ToolStripMenuItem addPatientToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editPatientToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deletePatientToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearSearchResultsToolStripMenuItem;
     }
 }

@@ -24,6 +24,8 @@ namespace PatientRegistrationApp.Forms
             this.dgvPatients = dgvPatients;
         }
 
+        public List<Patient> SearchResults { get; private set; } = null;
+
         private void btnSearch_Click(object sender, EventArgs e)
         {
             List<Patient> patients = patientDAL.SearchPatients(
@@ -41,21 +43,9 @@ namespace PatientRegistrationApp.Forms
 
             dgvPatients.DataSource = patients;
         }
-
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void btnClose_Click(object sender, EventArgs e)
         {
-            var result = MessageBox.Show(
-                "Closing this window will clear the search results. Do you want to continue?",
-                "Confirm Close",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning);
-
-            if (result == DialogResult.Yes)
-            {
-                List<Patient> patients = patientDAL.GetAllPatients();
-                dgvPatients.DataSource = patients;
-                this.Close();
-            }
+            this.Close();
         }
     }
 }
