@@ -16,7 +16,7 @@ namespace PatientRegistrationApp.Forms
     public partial class MainForm : Form
     {
         private User LoggedUser { get; set; }
-        private int CurrentOffset = 0;
+        PatientDAL Dal = new PatientDAL();
         private const int PageSize = 200;
         private BindingList<Patient> CurrentPatientsPage;
         private HashSet<int> LoadedPages = new HashSet<int>();
@@ -27,19 +27,44 @@ namespace PatientRegistrationApp.Forms
             LoggedUser = loggedUser;
         }
 
+        private double GetScrollPositionPercent()
+        {
+            int firstItemIndex = dgvPatients.FirstDisplayedScrollingRowIndex;
+            int totalRowCount = dgvPatients.RowCount;
+
+            return (double)firstItemIndex / totalRowCount * 100;
+        }
+        private int GetCurrentPageNumber()
+        {
+            int firstIndex = dgvPatients.FirstDisplayedScrollingRowIndex;
+            if (firstIndex < 0)
+                return 0;
+
+            return firstIndex / PageSize;
+        }
+        private bool IsPageVisible(int pageNumber, int pageSize)
+        {
+            if (dgvPatients.FirstDisplayedScrollingRowIndex < 0)
+                return false; // nothing is displayed yet
+
+            int firstItemIndex = dgvPatients.FirstDisplayedScrollingRowIndex;
+            int lastItemIndex = firstItemIndex + dgvPatients.DisplayedRowCount(true) - 1;
+
+            int pageStartIndex = pageNumber * pageSize;
+            int pageEndIndex = pageStartIndex + pageSize - 1;
+
+            return !(pageEndIndex < firstItemIndex || pageStartIndex > lastItemIndex);
+        }
         private void MainForm_Load(object sender, EventArgs e)
         {
             lblWelcome.Text = $"Welcome, {LoggedUser.FirstName}!";
-            
-            var patientDAL = new PatientDAL();
-            CurrentPatientsPage = new BindingList<Patient>(patientDAL.GetPatientsPage(CurrentOffset, PageSize));
+
+
+            //CurrentPatientsPage = new BindingList<Patient>(Dal.GetPatientsPage(0, PageSize));
+            CurrentPatientsPage = new BindingList<Patient>(Dal.GetAllPatients());
             dgvPatients.DataSource = CurrentPatientsPage;
         }
         private void dgvPatients_Scroll(object sender, ScrollEventArgs e)
-        {
-
-        }
-        private void refreshViewToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
         }
@@ -51,6 +76,25 @@ namespace PatientRegistrationApp.Forms
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Restart();
+        }
+
+        private void searchPatientToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SearchPatientForm searchPatientForm = new SearchPatientForm(dgvPatients);
+            searchPatientForm.Show();
+        }
+
+        private void editPatientToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dgvPatients.CurrentRow != null && dgvPatients.CurrentRow.DataBoundItem is Patient selectedPatient)
+            {
+                EditUserForm editForm = new EditUserForm(LoggedUser, selectedPatient);
+                editForm.Show();
+            }
+            else
+            {
+                MessageBox.Show("Please select a patient to edit.");
+            }
         }
     }
 }

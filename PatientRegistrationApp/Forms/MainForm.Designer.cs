@@ -32,7 +32,6 @@
             this.dgvPatients = new System.Windows.Forms.DataGridView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.patientsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshViewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchPatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editPatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,7 +75,7 @@
             this.systemToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(9, 5);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(126, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(246, 24);
             this.menuStrip1.Stretch = false;
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
@@ -84,7 +83,6 @@
             // patientsToolStripMenuItem
             // 
             this.patientsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.refreshViewToolStripMenuItem,
             this.searchPatientToolStripMenuItem,
             this.editPatientToolStripMenuItem,
             this.addPatientToolStripMenuItem,
@@ -93,36 +91,31 @@
             this.patientsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.patientsToolStripMenuItem.Text = "Patients";
             // 
-            // refreshViewToolStripMenuItem
-            // 
-            this.refreshViewToolStripMenuItem.Name = "refreshViewToolStripMenuItem";
-            this.refreshViewToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
-            this.refreshViewToolStripMenuItem.Text = "Refresh view";
-            this.refreshViewToolStripMenuItem.Click += new System.EventHandler(this.refreshViewToolStripMenuItem_Click);
-            // 
             // searchPatientToolStripMenuItem
             // 
             this.searchPatientToolStripMenuItem.Name = "searchPatientToolStripMenuItem";
-            this.searchPatientToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.searchPatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.searchPatientToolStripMenuItem.Text = "Search patient";
+            this.searchPatientToolStripMenuItem.Click += new System.EventHandler(this.searchPatientToolStripMenuItem_Click);
             // 
             // editPatientToolStripMenuItem
             // 
             this.editPatientToolStripMenuItem.Name = "editPatientToolStripMenuItem";
-            this.editPatientToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.editPatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.editPatientToolStripMenuItem.Text = "Edit patient";
+            this.editPatientToolStripMenuItem.Click += new System.EventHandler(this.editPatientToolStripMenuItem_Click);
             // 
             // addPatientToolStripMenuItem
             // 
             this.addPatientToolStripMenuItem.Name = "addPatientToolStripMenuItem";
-            this.addPatientToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.addPatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.addPatientToolStripMenuItem.Text = "Add patient";
             this.addPatientToolStripMenuItem.Click += new System.EventHandler(this.addPatientToolStripMenuItem_Click);
             // 
             // deletePatientToolStripMenuItem
             // 
             this.deletePatientToolStripMenuItem.Name = "deletePatientToolStripMenuItem";
-            this.deletePatientToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.deletePatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deletePatientToolStripMenuItem.Text = "Delete patient";
             // 
             // systemToolStripMenuItem
@@ -171,7 +164,6 @@
         private System.Windows.Forms.ToolStripMenuItem logOutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem patientsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem searchPatientToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem refreshViewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem addPatientToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editPatientToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deletePatientToolStripMenuItem;

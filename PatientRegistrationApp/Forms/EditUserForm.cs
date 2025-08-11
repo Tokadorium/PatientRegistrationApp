@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using PatientRegistrationApp.BLL;
 using PatientRegistrationApp.DAL;
@@ -9,20 +7,22 @@ using PatientRegistrationApp.Models;
 
 namespace PatientRegistrationApp.Forms
 {
-    public partial class AddPatientForm : Form
+    public partial class EditUserForm : Form
     {
-        public AddPatientForm(User loggedUser)
-        {
-            InitializeComponent();
-
-            mapTextBoxes();
-
-            LoggedUser = loggedUser;
-        }
-        private User LoggedUser { get; set; }
+        private User LoggedUser;
+        private Patient Patient;
         private TextBox[] textBoxes;
         private Dictionary<string, TextBox> fieldMapping;
         private ErrorProvider errorProvider = new ErrorProvider();
+
+        public EditUserForm(User loggedUser, Patient patient)
+        {
+            InitializeComponent();
+            Patient = patient;
+            LoggedUser = loggedUser;
+            mapTextBoxes();
+            PopulateFields();
+        }
 
         private void mapTextBoxes()
         {
@@ -45,9 +45,23 @@ namespace PatientRegistrationApp.Forms
                 { "City", txtCity }
             };
         }
+
+        private void PopulateFields()
+        {
+            txtFirstName.Text = Patient.FirstName;
+            txtLastName.Text = Patient.LastName;
+            txtPESEL.Text = Patient.PESEL;
+            txtPhone.Text = Patient.Phone;
+            txtEmail.Text = Patient.Email;
+            txtStreet.Text = Patient.Street;
+            txtBuildingNumber.Text = Patient.BuildingNumber;
+            txtApartmentNumber.Text = Patient.ApartmentNumber;
+            txtPostalCode.Text = Patient.PostalCode;
+            txtCity.Text = Patient.City;
+        }
+
         private void highlightFieldsInError(Dictionary<string, string> generalMessages, Dictionary<string, string> detailedMessages)
         {
-
             bool IsInGroup1(string fieldKey)
             {
                 return fieldKey == "FirstName" || fieldKey == "LastName" || fieldKey == "PESEL";
@@ -94,10 +108,16 @@ namespace PatientRegistrationApp.Forms
                 }
             }
         }
-        private void btnAdd_Click(object sender, EventArgs e)
+
+        private void btnCancel_Click(object sender, EventArgs e)
         {
-            var patient = new Patient
+            this.Close();
+        }
+        private void btnUpdate_Click(object sender, EventArgs e)
+        {
+            var updatedPatient = new Patient
             {
+                Id = Patient.Id,
                 FirstName = txtFirstName.Text,
                 LastName = txtLastName.Text,
                 PESEL = txtPESEL.Text,
@@ -108,13 +128,12 @@ namespace PatientRegistrationApp.Forms
                 ApartmentNumber = txtApartmentNumber.Text,
                 PostalCode = txtPostalCode.Text,
                 City = txtCity.Text,
-                MetaData = null
+                MetaData = Patient.MetaData
             };
 
             // validate and normalize
-            Patient parsedPatient = PatientValidator.TryParsePatient(patient, out PatientValidator.ParsingMessages parsingMessages);
+            Patient parsedPatient = PatientValidator.TryParsePatient(updatedPatient, out PatientValidator.ParsingMessages parsingMessages);
 
-            // if patient is not valid show a box containing general errors and mark the form fields
             if (!PatientValidator.ValidatePatient(parsedPatient, out Patient validatedPatient, out PatientValidator.ValidationMessages validationMessages))
             {
                 highlightFieldsInError(validationMessages.groupedErrors, parsingMessages.Errors);
@@ -122,40 +141,19 @@ namespace PatientRegistrationApp.Forms
                 return;
             }
 
-
-            using (var confirmForm = new ConfirmPatientForm(validatedPatient))
-            {
-                if (confirmForm.ShowDialog() != DialogResult.OK)
-                {
-                    // user cancelled
-                    return;
-                }
-            }
-
-            // try to add to DB
-            var patientDAL = new PatientDAL();
             var userDAL = new UserDAL();
+            var patientDAL = new PatientDAL();
 
-            if (patientDAL.GetPatientByPESEL(validatedPatient.PESEL) != null)
+            if (userDAL.UserHasPermission(LoggedUser.Id, "User") && patientDAL.UpdatePatient(validatedPatient))
             {
-                MessageBox.Show("Patient with this PESEL already exists.");
-                return;
-            }
-
-            // do not add if the user does not have permission
-            if (userDAL.UserHasPermission(LoggedUser.Id, "User") && patientDAL.AddPatient(validatedPatient))
-            {
-                MessageBox.Show("Patient added successfully.");
+                MessageBox.Show("Patient updated successfully.");
+                this.DialogResult = DialogResult.OK;
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Failed to add patient.");
+                MessageBox.Show("Failed to update patient.");
             }
-        }
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }

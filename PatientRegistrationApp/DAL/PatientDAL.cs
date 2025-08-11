@@ -289,5 +289,105 @@ namespace PatientRegistrationApp.DAL
             }
             return patients;
         }
+        public List<Patient> SearchPatients(
+            string firstName,
+            string lastName,
+            string pesel,
+            string phone,
+            string email,
+            string street,
+            string buildingNumber,
+            string apartmentNumber,
+            string postalCode,
+            string city)
+        {
+    var patients = new List<Patient>();
+    var query = new StringBuilder(@"SELECT 
+        Id, FirstName, LastName, PESEL, Phone, Email, Street, BuildingNumber, ApartmentNumber, PostalCode, City
+        FROM Patients WHERE 1=1");
+    var parameters = new List<SqlParameter>();
+
+    if (!string.IsNullOrWhiteSpace(firstName))
+    {
+        query.Append(" AND FirstName LIKE @FirstName");
+        parameters.Add(new SqlParameter("@FirstName", "%" + firstName + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(lastName))
+    {
+        query.Append(" AND LastName LIKE @LastName");
+        parameters.Add(new SqlParameter("@LastName", "%" + lastName + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(pesel))
+    {
+        query.Append(" AND PESEL LIKE @PESEL");
+        parameters.Add(new SqlParameter("@PESEL", "%" + pesel + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(phone))
+    {
+        query.Append(" AND Phone LIKE @Phone");
+        parameters.Add(new SqlParameter("@Phone", "%" + phone + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(email))
+    {
+        query.Append(" AND Email LIKE @Email");
+        parameters.Add(new SqlParameter("@Email", "%" + email + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(street))
+    {
+        query.Append(" AND Street LIKE @Street");
+        parameters.Add(new SqlParameter("@Street", "%" + street + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(buildingNumber))
+    {
+        query.Append(" AND BuildingNumber LIKE @BuildingNumber");
+        parameters.Add(new SqlParameter("@BuildingNumber", "%" + buildingNumber + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(apartmentNumber))
+    {
+        query.Append(" AND ApartmentNumber LIKE @ApartmentNumber");
+        parameters.Add(new SqlParameter("@ApartmentNumber", "%" + apartmentNumber + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(postalCode))
+    {
+        query.Append(" AND PostalCode LIKE @PostalCode");
+        parameters.Add(new SqlParameter("@PostalCode", "%" + postalCode + "%"));
+    }
+    if (!string.IsNullOrWhiteSpace(city))
+    {
+        query.Append(" AND City LIKE @City");
+        parameters.Add(new SqlParameter("@City", "%" + city + "%"));
+    }
+
+    using (var conn = Db.GetConnection())
+    {
+        conn.Open();
+        using (var cmd = new SqlCommand(query.ToString(), conn))
+        {
+            cmd.Parameters.AddRange(parameters.ToArray());
+            using (var reader = cmd.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    var patient = new Patient
+                    {
+                        Id = (int)reader["Id"],
+                        FirstName = reader["FirstName"].ToString(),
+                        LastName = reader["LastName"].ToString(),
+                        PESEL = reader["PESEL"].ToString(),
+                        Phone = reader["Phone"] as string,
+                        Email = reader["Email"] as string,
+                        Street = reader["Street"] as string,
+                        BuildingNumber = reader["BuildingNumber"] as string,
+                        ApartmentNumber = reader["ApartmentNumber"] as string,
+                        PostalCode = reader["PostalCode"] as string,
+                        City = reader["City"] as string,
+                    };
+                    patients.Add(patient);
+                }
+            }
+        }
+    }
+    return patients;
+}
     }
 }
