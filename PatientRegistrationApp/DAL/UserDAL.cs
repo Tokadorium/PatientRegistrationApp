@@ -109,11 +109,11 @@ namespace PatientRegistrationApp.DAL
                 using (var cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@id", id);
-                    var roleObj = cmd.ExecuteScalar();
+                    var role = cmd.ExecuteScalar();
 
-                    // place to use some auth service to pull the role and immidiately
+                    // place to use some auth service to pull the role and immediately
                     // encrypt it
-                    return roleObj?.ToString();
+                    return role?.ToString();
                 }
             }
         }
@@ -210,11 +210,11 @@ namespace PatientRegistrationApp.DAL
                 {
                     cmd.Parameters.AddWithValue("@Id", userId);
 
-                    var userRoleObj = cmd.ExecuteScalar();
-                    if (userRoleObj == null)
+                    var role = cmd.ExecuteScalar();
+                    if (role == null)
                         return false;
 
-                    string userRole = userRoleObj.ToString();
+                    string userRole = role.ToString();
 
                     int userRoleIndex = roleHierarchy.IndexOf(userRole);
                     int requiredRoleIndex = roleHierarchy.IndexOf(requiredRole);

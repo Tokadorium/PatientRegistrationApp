@@ -9,12 +9,13 @@ namespace PatientRegistrationApp.Forms
 {
     public partial class MainForm : Form
     {
+        private const int PageSize = 200;
+
         private readonly User _loggedUser;
         private readonly PatientDAL _dal = new PatientDAL();
-        private const int PageSize = 200;
-        private BindingList<Patient> _currentPatientsPage;
         private readonly HashSet<int> _loadedPages = new HashSet<int>();
 
+        private BindingList<Patient> _currentPatientsPage;
         private bool _isFiltered = false;
 
         public MainForm(User loggedUser)

@@ -1,4 +1,3 @@
-
 using PatientRegistrationApp.DAL;
 using PatientRegistrationApp.Models;
 
@@ -9,7 +8,9 @@ namespace PatientRegistrationApp.Tests
         public static void SeedPatients(int count)
         {
             var dal = new PatientDAL();
-            int year = 1980, month = 1, day = 1;
+            int year = 1980;
+            int month = 1;
+            int day = 1;
 
             for (int i = 0; i < count; i++)
             {

@@ -144,14 +144,14 @@ namespace PatientRegistrationApp.BLL
             string cleaned = Regex.Replace(phone, @"[^\d]", "");
 
             // accept optional 048 or 48 prefix, capture the 9 digits after
-            var m = Regex.Match(cleaned, @"^(?:48|048)?(\d{9})$");
-            if (!m.Success)
+            var match = Regex.Match(cleaned, @"^(?:48|048)?(\d{9})$");
+            if (!match.Success)
             {
                 errorMessage = "Number must be a valid polish number. Make sure the number has exactly 9 digits";
                 return false;
             }
 
-            string subscriber = m.Groups[1].Value;
+            string subscriber = match.Groups[1].Value;
             normalized = "048" + subscriber;
 
             return true;
