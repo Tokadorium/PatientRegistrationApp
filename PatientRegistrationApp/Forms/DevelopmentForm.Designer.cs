@@ -40,9 +40,9 @@
             this.btnGenerateUsers.Name = "btnGenerateUsers";
             this.btnGenerateUsers.Size = new System.Drawing.Size(216, 23);
             this.btnGenerateUsers.TabIndex = 0;
-            this.btnGenerateUsers.Text = "Generate users";
+            this.btnGenerateUsers.Text = "Generate patients";
             this.btnGenerateUsers.UseVisualStyleBackColor = true;
-            this.btnGenerateUsers.Click += new System.EventHandler(this.btnGenerateUsers_Click);
+            this.btnGenerateUsers.Click += new System.EventHandler(this.btnGeneratePatients_Click);
             // 
             // btnGeneratePatients
             // 
@@ -50,9 +50,9 @@
             this.btnGeneratePatients.Name = "btnGeneratePatients";
             this.btnGeneratePatients.Size = new System.Drawing.Size(216, 23);
             this.btnGeneratePatients.TabIndex = 1;
-            this.btnGeneratePatients.Text = "Generate patients";
+            this.btnGeneratePatients.Text = "Generate users";
             this.btnGeneratePatients.UseVisualStyleBackColor = true;
-            this.btnGeneratePatients.Click += new System.EventHandler(this.btnGeneratePatients_Click);
+            this.btnGeneratePatients.Click += new System.EventHandler(this.btnGenerateUsers_Click);
             // 
             // btnStart
             // 

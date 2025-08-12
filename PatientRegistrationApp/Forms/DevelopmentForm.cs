@@ -11,7 +11,7 @@ namespace PatientRegistrationApp.Forms
             InitializeComponent();
         }
 
-        private void btnGenerateUsers_Click(object sender, EventArgs e)
+        private void btnGeneratePatients_Click(object sender, EventArgs e)
         {
             using (var countForm = new CountInputForm())
             {
@@ -23,7 +23,7 @@ namespace PatientRegistrationApp.Forms
             }
         }
 
-        private void btnGeneratePatients_Click(object sender, EventArgs e)
+        private void btnGenerateUsers_Click(object sender, EventArgs e)
         {
             UserSeeder.SeedDefaultUsers();
             MessageBox.Show("Users generated.");

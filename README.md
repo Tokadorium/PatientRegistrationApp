@@ -47,5 +47,7 @@
     Username: `user`  
     Password: `user123`
 
+## Troubleshooting
+- If you can not generate patients ensure to relaunch Visual Studio again after setting `DB_CONN_STR`
 
 ---
