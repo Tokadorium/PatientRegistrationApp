@@ -1,6 +1,6 @@
 ﻿namespace PatientRegistrationApp.Forms
 {
-    partial class DeleteUser
+    partial class DeletePatientForm
     {
         /// <summary>
         /// Required designer variable.
@@ -252,7 +252,7 @@
             this.lblFirstName.TabIndex = 67;
             this.lblFirstName.Text = "First Name:";
             // 
-            // DeleteUser
+            // DeletePatientForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -280,9 +280,9 @@
             this.Controls.Add(this.lblLastName);
             this.Controls.Add(this.txtFirstName);
             this.Controls.Add(this.lblFirstName);
-            this.Name = "DeleteUser";
+            this.Name = "DeletePatientForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "DeleteUser";
+            this.Text = "Delete patient";
             this.ResumeLayout(false);
             this.PerformLayout();
 

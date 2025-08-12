@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using PatientRegistrationApp.Models;
 using PatientRegistrationApp.BLL;
-using PatientRegistrationApp.DAL;
+using PatientRegistrationApp.Models;
 
 namespace PatientRegistrationApp.Forms
 {
     public partial class LoginForm : Form
     {
         public User LoggedUser { get; private set; }
-        private int timesTried = 0;
+        private int _timesTried = 0;
 
         public LoginForm()
         {
@@ -27,10 +19,12 @@ namespace PatientRegistrationApp.Forms
         {
 
         }
+        
         private void lblPassword_Click(object sender, EventArgs e)
         {
             // logic to reset a password
         }
+        
         private void btnLogin_Click(object sender, EventArgs e)
         {
             try
@@ -50,8 +44,8 @@ namespace PatientRegistrationApp.Forms
 
                 if (LoggedUser == null)
                 {
-                    timesTried++;
-                    if (timesTried >= 3) lnkForgotPassword.Visible = true;
+                    _timesTried++;
+                    if (_timesTried >= 3) lnkForgotPassword.Visible = true;
                     MessageBox.Show(loginErrorMessage);
                     return;
                 }
@@ -71,6 +65,7 @@ namespace PatientRegistrationApp.Forms
                 txtUsername.Focus();
             }
         }
+        
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();

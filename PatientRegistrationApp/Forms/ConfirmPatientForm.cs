@@ -1,11 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 using PatientRegistrationApp.Models;
@@ -14,11 +7,12 @@ namespace PatientRegistrationApp.Forms
 {
     public partial class ConfirmPatientForm : Form
     {
-        Patient ValidatedPatient;
+        private Patient _validatedPatient;
+
         public ConfirmPatientForm(Patient validatedPatient)
         {
             InitializeComponent();
-            ValidatedPatient = validatedPatient;
+            _validatedPatient = validatedPatient;
         }
 
         private void btnConfirm_Click(object sender, EventArgs e)
@@ -29,16 +23,16 @@ namespace PatientRegistrationApp.Forms
 
         private void ConfirmPatientForm_Load(object sender, EventArgs e)
         {
-            txtFirstName.Text = ValidatedPatient.FirstName;
-            txtLastName.Text = ValidatedPatient.LastName;
-            txtPESEL.Text = ValidatedPatient.PESEL;
-            txtPhone.Text = ValidatedPatient.Phone;
-            txtEmail.Text = ValidatedPatient.Email;
-            txtCity.Text = ValidatedPatient.City;
-            txtStreet.Text = ValidatedPatient.Street;
-            txtBuildingNumber.Text = ValidatedPatient.BuildingNumber;
-            txtApartmentNumber.Text = ValidatedPatient.ApartmentNumber;
-            txtPostalCode.Text = ValidatedPatient.PostalCode;
+            txtFirstName.Text = _validatedPatient.FirstName;
+            txtLastName.Text = _validatedPatient.LastName;
+            txtPESEL.Text = _validatedPatient.PESEL;
+            txtPhone.Text = _validatedPatient.Phone;
+            txtEmail.Text = _validatedPatient.Email;
+            txtCity.Text = _validatedPatient.City;
+            txtStreet.Text = _validatedPatient.Street;
+            txtBuildingNumber.Text = _validatedPatient.BuildingNumber;
+            txtApartmentNumber.Text = _validatedPatient.ApartmentNumber;
+            txtPostalCode.Text = _validatedPatient.PostalCode;
         }
 
         private void btnCancel_Click(object sender, EventArgs e)

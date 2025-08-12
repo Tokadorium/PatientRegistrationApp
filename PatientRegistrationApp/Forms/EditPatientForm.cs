@@ -9,31 +9,28 @@ namespace PatientRegistrationApp.Forms
 {
     public partial class EditPatientForm : Form
     {
-        private User LoggedUser;
-        private Patient Patient;
-        private TextBox[] textBoxes;
-        private Dictionary<string, TextBox> fieldMapping;
-        private ErrorProvider errorProvider = new ErrorProvider();
-        private DataGridView DataGridView;
+        private readonly User _loggedUser;
+        private readonly Patient _patient;
+        private readonly DataGridView _dataGridView;
+        
+        private readonly TextBox[] _textBoxes;
+        private readonly Dictionary<string, TextBox> _fieldMapping;
+        private readonly ErrorProvider _errorProvider = new ErrorProvider();
 
         public EditPatientForm(User loggedUser, DataGridView dataGridView, Patient patient)
         {
             InitializeComponent();
-            Patient = patient;
-            LoggedUser = loggedUser;
-            DataGridView = dataGridView;
-            mapTextBoxes();
-            PopulateFields();
-        }
-
-        private void mapTextBoxes()
-        {
-            textBoxes = new TextBox[] {
+            _patient = patient;
+            _loggedUser = loggedUser;
+            _dataGridView = dataGridView;
+            
+            // Initialize readonly fields in constructor
+            _textBoxes = new TextBox[] {
                 txtFirstName, txtLastName, txtPESEL, txtPhone, txtEmail,
                 txtStreet, txtBuildingNumber, txtApartmentNumber, txtPostalCode, txtCity
             };
 
-            fieldMapping = new Dictionary<string, TextBox>
+            _fieldMapping = new Dictionary<string, TextBox>
             {
                 { "FirstName", txtFirstName },
                 { "LastName", txtLastName },
@@ -46,21 +43,25 @@ namespace PatientRegistrationApp.Forms
                 { "PostalCode", txtPostalCode },
                 { "City", txtCity }
             };
+            
+            PopulateFields();
         }
+
         private void PopulateFields()
         {
-            txtFirstName.Text = Patient.FirstName;
-            txtLastName.Text = Patient.LastName;
-            txtPESEL.Text = Patient.PESEL;
-            txtPhone.Text = Patient.Phone;
-            txtEmail.Text = Patient.Email;
-            txtStreet.Text = Patient.Street;
-            txtBuildingNumber.Text = Patient.BuildingNumber;
-            txtApartmentNumber.Text = Patient.ApartmentNumber;
-            txtPostalCode.Text = Patient.PostalCode;
-            txtCity.Text = Patient.City;
+            txtFirstName.Text = _patient.FirstName;
+            txtLastName.Text = _patient.LastName;
+            txtPESEL.Text = _patient.PESEL;
+            txtPhone.Text = _patient.Phone;
+            txtEmail.Text = _patient.Email;
+            txtStreet.Text = _patient.Street;
+            txtBuildingNumber.Text = _patient.BuildingNumber;
+            txtApartmentNumber.Text = _patient.ApartmentNumber;
+            txtPostalCode.Text = _patient.PostalCode;
+            txtCity.Text = _patient.City;
         }
-        private void highlightFieldsInError(Dictionary<string, string> generalMessages, Dictionary<string, string> detailedMessages)
+
+        private void HighlightFieldsInError(Dictionary<string, string> generalMessages, Dictionary<string, string> detailedMessages)
         {
             bool IsInGroup1(string fieldKey)
             {
@@ -78,7 +79,7 @@ namespace PatientRegistrationApp.Forms
                        fieldKey == "ApartmentNumber" || fieldKey == "PostalCode" || fieldKey == "City";
             }
 
-            errorProvider.Clear();
+            _errorProvider.Clear();
 
             foreach (var detailedMessage in detailedMessages)
             {
@@ -86,37 +87,46 @@ namespace PatientRegistrationApp.Forms
                 string errorMessage = detailedMessage.Value;
 
                 if (string.IsNullOrEmpty(errorMessage))
-                    continue;
-
-                if (fieldMapping.ContainsKey(fieldKey))
                 {
-                    TextBox targetTextBox = fieldMapping[fieldKey];
+                    continue;
+                }
 
+                if (_fieldMapping.ContainsKey(fieldKey))
+                {
+                    TextBox targetTextBox = _fieldMapping[fieldKey];
                     bool shouldShowError = false;
 
                     if (IsInGroup1(fieldKey) && generalMessages.ContainsKey("group1"))
+                    {
                         shouldShowError = true;
+                    }
                     else if (IsInGroup2(fieldKey) && generalMessages.ContainsKey("group2"))
+                    {
                         shouldShowError = true;
+                    }
                     else if (IsInGroup3(fieldKey) && generalMessages.ContainsKey("group3"))
+                    {
                         shouldShowError = true;
+                    }
 
                     if (shouldShowError)
                     {
-                        errorProvider.SetError(targetTextBox, errorMessage);
+                        _errorProvider.SetError(targetTextBox, errorMessage);
                     }
                 }
             }
         }
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();
         }
+
         private void btnUpdate_Click(object sender, EventArgs e)
         {
             var updatedPatient = new Patient
             {
-                Id = Patient.Id,
+                Id = _patient.Id,
                 FirstName = txtFirstName.Text,
                 LastName = txtLastName.Text,
                 PESEL = txtPESEL.Text,
@@ -127,7 +137,7 @@ namespace PatientRegistrationApp.Forms
                 ApartmentNumber = txtApartmentNumber.Text,
                 PostalCode = txtPostalCode.Text,
                 City = txtCity.Text,
-                MetaData = Patient.MetaData
+                MetaData = _patient.MetaData
             };
 
             // validate and normalize
@@ -135,30 +145,32 @@ namespace PatientRegistrationApp.Forms
 
             if (!PatientValidator.ValidatePatient(parsedPatient, out Patient validatedPatient, out PatientValidator.ValidationMessages validationMessages))
             {
-                highlightFieldsInError(validationMessages.groupedErrors, parsingMessages.Errors);
-                MessageBox.Show(string.Join(Environment.NewLine, validationMessages.groupedErrors.Values), "Validation Error");
+                HighlightFieldsInError(validationMessages.GroupedErrors, parsingMessages.Errors);
+                MessageBox.Show(string.Join(Environment.NewLine, validationMessages.GroupedErrors.Values), "Validation Error");
                 return;
             }
 
             var userDAL = new UserDAL();
             var patientDAL = new PatientDAL();
 
-            if (userDAL.UserHasPermission(LoggedUser.Id, "User") && patientDAL.UpdatePatient(validatedPatient))
+            if (userDAL.UserHasPermission(_loggedUser.Id, "User") && patientDAL.UpdatePatient(validatedPatient))
             {
                 this.DialogResult = DialogResult.OK;
-                if (DataGridView.CurrentRow != null)
+
+                if (_dataGridView.CurrentRow != null)
                 {
-                    DataGridView.CurrentRow.Cells["FirstName"].Value = validatedPatient.FirstName;
-                    DataGridView.CurrentRow.Cells["LastName"].Value = validatedPatient.LastName;
-                    DataGridView.CurrentRow.Cells["PESEL"].Value = validatedPatient.PESEL;
-                    DataGridView.CurrentRow.Cells["Phone"].Value = validatedPatient.Phone;
-                    DataGridView.CurrentRow.Cells["Email"].Value = validatedPatient.Email;
-                    DataGridView.CurrentRow.Cells["Street"].Value = validatedPatient.Street;
-                    DataGridView.CurrentRow.Cells["BuildingNumber"].Value = validatedPatient.BuildingNumber;
-                    DataGridView.CurrentRow.Cells["ApartmentNumber"].Value = validatedPatient.ApartmentNumber;
-                    DataGridView.CurrentRow.Cells["PostalCode"].Value = validatedPatient.PostalCode;
-                    DataGridView.CurrentRow.Cells["City"].Value = validatedPatient.City;
+                    _dataGridView.CurrentRow.Cells["FirstName"].Value = validatedPatient.FirstName;
+                    _dataGridView.CurrentRow.Cells["LastName"].Value = validatedPatient.LastName;
+                    _dataGridView.CurrentRow.Cells["PESEL"].Value = validatedPatient.PESEL;
+                    _dataGridView.CurrentRow.Cells["Phone"].Value = validatedPatient.Phone;
+                    _dataGridView.CurrentRow.Cells["Email"].Value = validatedPatient.Email;
+                    _dataGridView.CurrentRow.Cells["Street"].Value = validatedPatient.Street;
+                    _dataGridView.CurrentRow.Cells["BuildingNumber"].Value = validatedPatient.BuildingNumber;
+                    _dataGridView.CurrentRow.Cells["ApartmentNumber"].Value = validatedPatient.ApartmentNumber;
+                    _dataGridView.CurrentRow.Cells["PostalCode"].Value = validatedPatient.PostalCode;
+                    _dataGridView.CurrentRow.Cells["City"].Value = validatedPatient.City;
                 }
+
                 this.Close();
             }
             else

@@ -1,6 +1,6 @@
-using System;
-using PatientRegistrationApp.Models;
+
 using PatientRegistrationApp.DAL;
+using PatientRegistrationApp.Models;
 
 namespace PatientRegistrationApp.Tests
 {
@@ -9,7 +9,6 @@ namespace PatientRegistrationApp.Tests
         public static void SeedPatients(int count)
         {
             var dal = new PatientDAL();
-            var random = new Random();
             int year = 1980, month = 1, day = 1;
 
             for (int i = 0; i < count; i++)
@@ -40,6 +39,7 @@ namespace PatientRegistrationApp.Tests
                 if (month > 12) { month = 1; year++; }
             }
         }
+
         private static string GeneratePesel(int year, int month, int day, int index)
         {
             int yy = year % 100;

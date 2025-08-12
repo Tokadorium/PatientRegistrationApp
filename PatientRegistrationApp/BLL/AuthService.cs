@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PatientRegistrationApp.Models;
 using PatientRegistrationApp.DAL;
+using PatientRegistrationApp.Models;
 
 namespace PatientRegistrationApp.BLL
 {
@@ -12,10 +8,8 @@ namespace PatientRegistrationApp.BLL
     {
         public static User TryLogin(string username, string password, out string errorMessage)
         {
-            var dal = new UserDAL();
-            var user = dal.GetByUsername(username);
-
-            user.UserRole = dal.GetUserRole(user.Id);
+            var userDAL = new UserDAL();
+            var user = userDAL.GetByUsername(username);
 
             errorMessage = null;
 
@@ -25,30 +19,35 @@ namespace PatientRegistrationApp.BLL
                 return null;
             }
 
-            // DateTime.Now may not be the best choice but yeah, maybe later
+            // Get user role after confirming user exists
+            user.UserRole = userDAL.GetUserRole(user.Id);
+
+            // Check if account is locked
             if (user.LockedUntil.HasValue && user.LockedUntil.Value > DateTime.Now)
             {
                 errorMessage = $"Account is locked until {user.LockedUntil.Value}. Please try again later.";
                 return null;
             }
 
+            // Verify password
             if (PasswordHasher.Verify(password, user.PasswordHash))
             {
-                // reset failed attempts on successful login
+                // Reset failed attempts on successful login
                 user.FailedAttempts = 0;
                 user.LockedUntil = null;
-                dal.UpdateUser(user);
+                userDAL.UpdateUser(user);
                 return user;
             }
             else
             {
+                // Handle failed login attempt
                 user.FailedAttempts++;
                 if (user.FailedAttempts >= 5)
                 {
                     user.LockedUntil = DateTime.Now.AddMinutes(15);
                     errorMessage = "Too many failed attempts. Try again later.";
                 }
-                dal.UpdateUser(user);
+                userDAL.UpdateUser(user);
 
                 errorMessage = "Invalid credentials.";
                 return null;

@@ -1,8 +1,8 @@
 using System;
 using System.Windows.Forms;
-using PatientRegistrationApp.Models;
-using PatientRegistrationApp.DAL;
 using PatientRegistrationApp.BLL;
+using PatientRegistrationApp.DAL;
+using PatientRegistrationApp.Models;
 
 namespace PatientRegistrationApp.Forms
 {

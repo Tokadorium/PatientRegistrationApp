@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
-using System.Globalization;
 using PatientRegistrationApp.Models;
-using System.Net.Http.Headers;
 
 namespace PatientRegistrationApp.BLL
 {
@@ -20,19 +19,24 @@ namespace PatientRegistrationApp.BLL
             public void AddError(string field, string errorMessage)
             {
                 if (!Errors.ContainsKey(field))
+                {
                     Errors[field] = errorMessage;
+                }
             }
         }
+
         public class ValidationMessages
         {
-            public Dictionary<string, string> groupedErrors { get; } = new Dictionary<string, string>();
+            public Dictionary<string, string> GroupedErrors { get; } = new Dictionary<string, string>();
 
-            public bool IsValid => groupedErrors.Count == 0;
+            public bool IsValid => GroupedErrors.Count == 0;
 
             public void AddError(string field, string errorMessage)
             {
-                if (!groupedErrors.ContainsKey(field))
-                    groupedErrors[field] = errorMessage;
+                if (!GroupedErrors.ContainsKey(field))
+                {
+                    GroupedErrors[field] = errorMessage;
+                }
             }
         }
 
@@ -40,6 +44,7 @@ namespace PatientRegistrationApp.BLL
         {
             return CultureInfo.CurrentCulture.TextInfo.ToTitleCase(name.Trim().ToLower());
         }
+
         private static bool TryParsePesel(string pesel, out string normalized, out string errorMessage)
         {
             errorMessage = null;
@@ -123,6 +128,7 @@ namespace PatientRegistrationApp.BLL
             normalized = pesel;
             return true;
         }
+
         private static bool TryParsePhone(string phone, out string normalized, out string errorMessage)
         {
             errorMessage = null;
@@ -150,6 +156,7 @@ namespace PatientRegistrationApp.BLL
 
             return true;
         }
+
         private static bool TryParseEmail(string email, out string normalized, out string errorMessage)
         {
             errorMessage = null;
@@ -176,6 +183,7 @@ namespace PatientRegistrationApp.BLL
 
             return true;
         }
+
         private static bool TryParsePostalCode(string postalCode, out string normalized, out string errorMessage)
         {
             errorMessage = null;
@@ -189,7 +197,7 @@ namespace PatientRegistrationApp.BLL
 
             string cleaned = postalCode.Trim();
 
-            // Polish codes only
+            // polish codes only
             var match = Regex.Match(cleaned, @"^(\d{2})-?(\d{3})$");
             if (!match.Success)
             {
@@ -200,6 +208,7 @@ namespace PatientRegistrationApp.BLL
             normalized = $"{match.Groups[1].Value}-{match.Groups[2].Value}";
             return true;
         }
+
         public static Patient TryParsePatient(Patient patient, out ParsingMessages errorMessages)
         {
             var result = new ParsingMessages();
@@ -209,67 +218,108 @@ namespace PatientRegistrationApp.BLL
 
             // name
             if (string.IsNullOrWhiteSpace(patient.FirstName))
+            {
                 result.AddError("FirstName", "Name field is empty");
+            }
             else
+            {
                 normalized.FirstName = NormalizeName(patient.FirstName);
+            }
 
             // last name
             if (string.IsNullOrWhiteSpace(patient.LastName))
+            {
                 result.AddError("LastName", "Last name field is empty");
+            }
             else
+            {
                 normalized.LastName = NormalizeName(patient.LastName);
+            }
 
-            // PESEL
+            // pesel
             if (!TryParsePesel(patient.PESEL, out string normalizedPesel, out string peselError))
+            {
                 result.AddError("PESEL", peselError);
+            }
             else
+            {
                 normalized.PESEL = normalizedPesel;
+            }
 
             // phone
             if (!TryParsePhone(patient.Phone, out string normalizedPhone, out string phoneError))
+            {
                 result.AddError("Phone", phoneError);
+            }
             else
+            {
                 normalized.Phone = normalizedPhone;
+            }
 
             // email
             if (!TryParseEmail(patient.Email, out string normalizedEmail, out string emailError))
+            {
                 result.AddError("Email", emailError);
+            }
             else
+            {
                 normalized.Email = normalizedEmail;
+            }
 
             // street
             if (string.IsNullOrWhiteSpace(patient.Street))
+            {
                 result.AddError("Street", "Street field is empty");
+            }
             else
+            {
                 normalized.Street = NormalizeName(patient.Street);
+            }
 
             // building number
             if (string.IsNullOrWhiteSpace(patient.BuildingNumber))
+            {
                 result.AddError("BuildingNumber", "Building field is empty");
+            }
             else
+            {
                 normalized.BuildingNumber = patient.BuildingNumber.Trim();
+            }
 
             // apartment number
             if (string.IsNullOrWhiteSpace(patient.ApartmentNumber))
+            {
                 result.AddError("ApartmentNumber", "Apartment field is empty");
+            }
             else
+            {
                 normalized.ApartmentNumber = patient.ApartmentNumber.Trim();
+            }
 
             // postal code
             if (!TryParsePostalCode(patient.PostalCode, out string normalizedPostalCode, out string postalCodeError))
+            {
                 result.AddError("PostalCode", postalCodeError);
+            }
             else
+            {
                 normalized.PostalCode = normalizedPostalCode;
+            }
 
             // city
             if (string.IsNullOrWhiteSpace(patient.City))
+            {
                 result.AddError("City", "City field is empty");
+            }
             else
+            {
                 normalized.City = NormalizeName(patient.City);
+            }
 
             errorMessages = result;
             return normalized;
         }
+
         public static bool ValidatePatient(Patient patient, out Patient validatedPatient, out ValidationMessages errorMessages)
         {
             errorMessages = new ValidationMessages();
@@ -289,7 +339,7 @@ namespace PatientRegistrationApp.BLL
                 errorMessages.AddError("group2", "Either phone or email must be provided.");
             }
 
-            // IF city is not filled, none of the address fields should be filled
+            // if city is not filled, none of the address fields should be filled
             if (string.IsNullOrWhiteSpace(patient.City))
             {
                 if (!string.IsNullOrWhiteSpace(patient.Street) ||
@@ -302,7 +352,7 @@ namespace PatientRegistrationApp.BLL
             }
             else
             {
-                // IF address is given then require it to be filled properly
+                // if address is given then require it to be filled properly
                 if (patient.PostalCode == null || patient.BuildingNumber == null)
                 {
                     errorMessages.AddError("group3", "Address should contain at least postal code and building number.");
@@ -310,7 +360,9 @@ namespace PatientRegistrationApp.BLL
             }
 
             if (!errorMessages.IsValid)
+            {
                 return false;
+            }
 
             validatedPatient = patient;
             return true;

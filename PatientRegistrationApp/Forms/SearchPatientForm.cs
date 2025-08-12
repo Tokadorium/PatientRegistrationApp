@@ -1,11 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using PatientRegistrationApp.DAL;
 using PatientRegistrationApp.Models;
@@ -14,21 +8,20 @@ namespace PatientRegistrationApp.Forms
 {
     public partial class SearchPatientForm : Form
     {
-        private DataGridView dgvPatients;
+        private readonly DataGridView _dgvPatients;
+        private readonly PatientDAL _patientDAL = new PatientDAL();
 
-        PatientDAL patientDAL = new PatientDAL();
+        public List<Patient> SearchResults { get; private set; } = null;
 
         public SearchPatientForm(DataGridView dgvPatients)
         {
             InitializeComponent();
-            this.dgvPatients = dgvPatients;
+            _dgvPatients = dgvPatients;
         }
-
-        public List<Patient> SearchResults { get; private set; } = null;
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            List<Patient> patients = patientDAL.SearchPatients(
+            List<Patient> patients = _patientDAL.SearchPatients(
                 txtFirstName.Text,
                 txtLastName.Text,
                 txtPESEL.Text,
@@ -41,8 +34,9 @@ namespace PatientRegistrationApp.Forms
                 txtCity.Text
             );
 
-            dgvPatients.DataSource = patients;
+            _dgvPatients.DataSource = patients;
         }
+        
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();

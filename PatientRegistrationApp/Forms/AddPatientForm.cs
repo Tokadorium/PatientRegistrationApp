@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using PatientRegistrationApp.BLL;
 using PatientRegistrationApp.DAL;
@@ -11,27 +9,27 @@ namespace PatientRegistrationApp.Forms
 {
     public partial class AddPatientForm : Form
     {
+        // Dependencies - readonly fields set in constructor
+        private readonly User _loggedUser;
+        
+        // UI field mappings - initialized in constructor
+        private readonly TextBox[] _textBoxes;
+        private readonly Dictionary<string, TextBox> _fieldMapping;
+        private readonly ErrorProvider _errorProvider = new ErrorProvider();
+
         public AddPatientForm(User loggedUser)
         {
             InitializeComponent();
-
-            mapTextBoxes();
-
-            LoggedUser = loggedUser;
-        }
-        private User LoggedUser { get; set; }
-        private TextBox[] textBoxes;
-        private Dictionary<string, TextBox> fieldMapping;
-        private ErrorProvider errorProvider = new ErrorProvider();
-
-        private void mapTextBoxes()
-        {
-            textBoxes = new TextBox[] {
+            _loggedUser = loggedUser;
+            
+            // Initialize readonly fields in constructor
+            _textBoxes = new TextBox[]
+            {
                 txtFirstName, txtLastName, txtPESEL, txtPhone, txtEmail,
                 txtStreet, txtBuildingNumber, txtApartmentNumber, txtPostalCode, txtCity
             };
 
-            fieldMapping = new Dictionary<string, TextBox>
+            _fieldMapping = new Dictionary<string, TextBox>
             {
                 { "FirstName", txtFirstName },
                 { "LastName", txtLastName },
@@ -45,9 +43,9 @@ namespace PatientRegistrationApp.Forms
                 { "City", txtCity }
             };
         }
-        private void highlightFieldsInError(Dictionary<string, string> generalMessages, Dictionary<string, string> detailedMessages)
-        {
 
+        private void HighlightFieldsInError(Dictionary<string, string> generalMessages, Dictionary<string, string> detailedMessages)
+        {
             bool IsInGroup1(string fieldKey)
             {
                 return fieldKey == "FirstName" || fieldKey == "LastName" || fieldKey == "PESEL";
@@ -64,7 +62,7 @@ namespace PatientRegistrationApp.Forms
                        fieldKey == "ApartmentNumber" || fieldKey == "PostalCode" || fieldKey == "City";
             }
 
-            errorProvider.Clear();
+            _errorProvider.Clear();
 
             foreach (var detailedMessage in detailedMessages)
             {
@@ -72,28 +70,36 @@ namespace PatientRegistrationApp.Forms
                 string errorMessage = detailedMessage.Value;
 
                 if (string.IsNullOrEmpty(errorMessage))
-                    continue;
-
-                if (fieldMapping.ContainsKey(fieldKey))
                 {
-                    TextBox targetTextBox = fieldMapping[fieldKey];
+                    continue;
+                }
 
+                if (_fieldMapping.ContainsKey(fieldKey))
+                {
+                    TextBox targetTextBox = _fieldMapping[fieldKey];
                     bool shouldShowError = false;
 
                     if (IsInGroup1(fieldKey) && generalMessages.ContainsKey("group1"))
+                    {
                         shouldShowError = true;
+                    }
                     else if (IsInGroup2(fieldKey) && generalMessages.ContainsKey("group2"))
+                    {
                         shouldShowError = true;
+                    }
                     else if (IsInGroup3(fieldKey) && generalMessages.ContainsKey("group3"))
+                    {
                         shouldShowError = true;
+                    }
 
                     if (shouldShowError)
                     {
-                        errorProvider.SetError(targetTextBox, errorMessage);
+                        _errorProvider.SetError(targetTextBox, errorMessage);
                     }
                 }
             }
         }
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var patient = new Patient
@@ -117,11 +123,10 @@ namespace PatientRegistrationApp.Forms
             // if patient is not valid show a box containing general errors and mark the form fields
             if (!PatientValidator.ValidatePatient(parsedPatient, out Patient validatedPatient, out PatientValidator.ValidationMessages validationMessages))
             {
-                highlightFieldsInError(validationMessages.groupedErrors, parsingMessages.Errors);
-                MessageBox.Show(string.Join(Environment.NewLine, validationMessages.groupedErrors.Values), "Validation Error");
+                HighlightFieldsInError(validationMessages.GroupedErrors, parsingMessages.Errors);
+                MessageBox.Show(string.Join(Environment.NewLine, validationMessages.GroupedErrors.Values), "Validation Error");
                 return;
             }
-
 
             using (var confirmForm = new ConfirmPatientForm(validatedPatient))
             {
@@ -132,7 +137,7 @@ namespace PatientRegistrationApp.Forms
                 }
             }
 
-            // try to add to DB
+            // try to add to database
             var patientDAL = new PatientDAL();
             var userDAL = new UserDAL();
 
@@ -143,7 +148,7 @@ namespace PatientRegistrationApp.Forms
             }
 
             // do not add if the user does not have permission
-            if (userDAL.UserHasPermission(LoggedUser.Id, "User") && patientDAL.AddPatient(validatedPatient))
+            if (userDAL.UserHasPermission(_loggedUser.Id, "User") && patientDAL.AddPatient(validatedPatient))
             {
                 MessageBox.Show("Patient added successfully.");
                 this.Close();
@@ -153,6 +158,7 @@ namespace PatientRegistrationApp.Forms
                 MessageBox.Show("Failed to add patient.");
             }
         }
+
         private void btnClose_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;
