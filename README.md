@@ -8,7 +8,7 @@
 ## Setup Instructions
 
 ### 1. Database Setup
-- Open `setup.sql` (provided in the repository) in SQL Server Management Studio or another SQL tool.
+- Open `setup.sql` (provided in the repository in `Build` folder) in SQL Server Management Studio or another SQL tool.
 - Execute the script. It will:
   - Create a database named `PatientRegistrationDB` (if it does not exist).
   - Create the required `Users` and `Patients` tables (if they do not exist).
