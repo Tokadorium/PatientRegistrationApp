@@ -14,7 +14,7 @@ namespace PatientRegistrationApp.Tests
 
             for (int i = 0; i < count; i++)
             {
-                // Generate unique PESEL
+                // Generate unique PESEL i wont use validation for these bc im tired
                 string pesel = GeneratePesel(year, month, day, i);
 
                 var patient = new Patient

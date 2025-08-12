@@ -19,12 +19,12 @@ namespace PatientRegistrationApp.Forms
         {
 
         }
-        
+
         private void lblPassword_Click(object sender, EventArgs e)
         {
             // logic to reset a password
         }
-        
+
         private void btnLogin_Click(object sender, EventArgs e)
         {
             try
@@ -65,7 +65,7 @@ namespace PatientRegistrationApp.Forms
                 txtUsername.Focus();
             }
         }
-        
+
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();

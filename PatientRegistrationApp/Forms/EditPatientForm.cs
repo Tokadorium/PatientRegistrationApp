@@ -12,7 +12,7 @@ namespace PatientRegistrationApp.Forms
         private readonly User _loggedUser;
         private readonly Patient _patient;
         private readonly DataGridView _dataGridView;
-        
+
         private readonly TextBox[] _textBoxes;
         private readonly Dictionary<string, TextBox> _fieldMapping;
         private readonly ErrorProvider _errorProvider = new ErrorProvider();
@@ -23,7 +23,7 @@ namespace PatientRegistrationApp.Forms
             _patient = patient;
             _loggedUser = loggedUser;
             _dataGridView = dataGridView;
-            
+
             // Initialize readonly fields in constructor
             _textBoxes = new TextBox[] {
                 txtFirstName, txtLastName, txtPESEL, txtPhone, txtEmail,
@@ -43,7 +43,7 @@ namespace PatientRegistrationApp.Forms
                 { "PostalCode", txtPostalCode },
                 { "City", txtCity }
             };
-            
+
             PopulateFields();
         }
 

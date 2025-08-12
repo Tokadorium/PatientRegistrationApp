@@ -71,7 +71,11 @@ namespace PatientRegistrationApp.Forms
 
         private void dgvPatients_Scroll(object sender, ScrollEventArgs e)
         {
-
+#if DEBUG
+            Console.WriteLine($"Scroll: {GetScrollPositionPercent()}");
+            Console.WriteLine($"Page: {GetCurrentPageNumber()}");
+            Console.WriteLine($"Loaded pages: {_loadedPages}");
+#endif
         }
 
         private void addPatientToolStripMenuItem_Click(object sender, EventArgs e)
@@ -140,13 +144,17 @@ namespace PatientRegistrationApp.Forms
                     if (deleteForm.ShowDialog() == DialogResult.OK)
                     {
                         LoadPatients();
-                        MessageBox.Show("Patient deleted successfully.");
+                        MessageBox.Show("Patient deleted successfully.", "Success");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to delete patient.", "Error");
                     }
                 }
             }
             else
             {
-                MessageBox.Show("Please select a patient to delete.");
+                MessageBox.Show("Please select a patient to delete.", "Error");
             }
         }
     }

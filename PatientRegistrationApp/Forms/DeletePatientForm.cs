@@ -1,6 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
-using System.Linq;
 using System.Windows.Forms;
 using PatientRegistrationApp.DAL;
 using PatientRegistrationApp.Models;
@@ -49,14 +47,20 @@ namespace PatientRegistrationApp.Forms
             if (confirm != DialogResult.Yes)
                 return;
 
-            if (userDAL.UserHasPermission(_loggedUser.Id, "User") && patientDAL.DeletePatient(_patient.Id))
+            if (!userDAL.UserHasPermission(_loggedUser.Id, "Manager"))
+            {
+                MessageBox.Show("Insufficient permission level. You need Manager role for that.");
+                this.DialogResult = DialogResult.No;
+                return;
+            }
+
+            if (patientDAL.DeletePatient(_patient.Id))
             {
                 this.DialogResult = DialogResult.OK;
-                this.Close();
             }
             else
             {
-                MessageBox.Show("Failed to delete patient.", "Error");
+                this.DialogResult = DialogResult.No;
             }
         }
 

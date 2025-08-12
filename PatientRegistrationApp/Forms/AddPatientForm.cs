@@ -11,7 +11,7 @@ namespace PatientRegistrationApp.Forms
     {
         // Dependencies - readonly fields set in constructor
         private readonly User _loggedUser;
-        
+
         // UI field mappings - initialized in constructor
         private readonly TextBox[] _textBoxes;
         private readonly Dictionary<string, TextBox> _fieldMapping;
@@ -21,7 +21,7 @@ namespace PatientRegistrationApp.Forms
         {
             InitializeComponent();
             _loggedUser = loggedUser;
-            
+
             // Initialize readonly fields in constructor
             _textBoxes = new TextBox[]
             {
@@ -147,8 +147,13 @@ namespace PatientRegistrationApp.Forms
                 return;
             }
 
-            // do not add if the user does not have permission
-            if (userDAL.UserHasPermission(_loggedUser.Id, "User") && patientDAL.AddPatient(validatedPatient))
+            if (!userDAL.UserHasPermission(_loggedUser.Id, "User"))
+            {
+                MessageBox.Show("Insufficient permissions.");
+                return;
+            }
+
+            if (patientDAL.AddPatient(validatedPatient))
             {
                 MessageBox.Show("Patient added successfully.");
                 this.Close();
