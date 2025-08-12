@@ -70,11 +70,23 @@
     <Compile Include="Forms\ConfirmPatientForm.Designer.cs">
       <DependentUpon>ConfirmPatientForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\CountInputForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\CountInputForm.Designer.cs">
+      <DependentUpon>CountInputForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\DeletePatientForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Forms\DeletePatientForm.Designer.cs">
       <DependentUpon>DeletePatientForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\DevelopmentForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DevelopmentForm.Designer.cs">
+      <DependentUpon>DevelopmentForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\EditPatientForm.cs">
       <SubType>Form</SubType>
@@ -105,6 +117,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\PatientSeeder.cs" />
+    <Compile Include="Tests\UserSeeder.cs" />
     <EmbeddedResource Include="Forms\AddPatientForm.resx">
       <DependentUpon>AddPatientForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -114,8 +127,14 @@
     <EmbeddedResource Include="Forms\ConfirmPatientForm.resx">
       <DependentUpon>ConfirmPatientForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CountInputForm.resx">
+      <DependentUpon>CountInputForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\DeletePatientForm.resx">
       <DependentUpon>DeletePatientForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DevelopmentForm.resx">
+      <DependentUpon>DevelopmentForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EditPatientForm.resx">
       <DependentUpon>EditPatientForm.cs</DependentUpon>
@@ -151,6 +170,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

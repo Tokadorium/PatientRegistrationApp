@@ -15,7 +15,11 @@ namespace PatientRegistrationApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            //Tests.PatientSeeder.SeedPatients(3000);
+            using (var devForm = new DevelopmentForm())
+            {
+                var result = devForm.ShowDialog();
+                if (result != DialogResult.OK) return;
+            }    
 
             using (var loginForm = new LoginForm())
             {
