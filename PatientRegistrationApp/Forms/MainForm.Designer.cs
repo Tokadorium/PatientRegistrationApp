@@ -33,12 +33,12 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.patientsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.searchPatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearSearchResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editPatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.addPatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deletePatientToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.systemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.logOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.clearSearchResultsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPatients)).BeginInit();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -100,6 +100,13 @@
             this.searchPatientToolStripMenuItem.Text = "Search patient";
             this.searchPatientToolStripMenuItem.Click += new System.EventHandler(this.searchPatientToolStripMenuItem_Click);
             // 
+            // clearSearchResultsToolStripMenuItem
+            // 
+            this.clearSearchResultsToolStripMenuItem.Name = "clearSearchResultsToolStripMenuItem";
+            this.clearSearchResultsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearSearchResultsToolStripMenuItem.Text = "Clear search results";
+            this.clearSearchResultsToolStripMenuItem.Click += new System.EventHandler(this.clearSearchResultsToolStripMenuItem_Click);
+            // 
             // editPatientToolStripMenuItem
             // 
             this.editPatientToolStripMenuItem.Name = "editPatientToolStripMenuItem";
@@ -119,6 +126,7 @@
             this.deletePatientToolStripMenuItem.Name = "deletePatientToolStripMenuItem";
             this.deletePatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.deletePatientToolStripMenuItem.Text = "Delete patient";
+            this.deletePatientToolStripMenuItem.Click += new System.EventHandler(this.deletePatientToolStripMenuItem_Click);
             // 
             // systemToolStripMenuItem
             // 
@@ -134,13 +142,6 @@
             this.logOutToolStripMenuItem.Size = new System.Drawing.Size(115, 22);
             this.logOutToolStripMenuItem.Text = "Log out";
             this.logOutToolStripMenuItem.Click += new System.EventHandler(this.logOutToolStripMenuItem_Click);
-            // 
-            // clearSearchResultsToolStripMenuItem
-            // 
-            this.clearSearchResultsToolStripMenuItem.Name = "clearSearchResultsToolStripMenuItem";
-            this.clearSearchResultsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.clearSearchResultsToolStripMenuItem.Text = "Clear search results";
-            this.clearSearchResultsToolStripMenuItem.Click += new System.EventHandler(this.clearSearchResultsToolStripMenuItem_Click);
             // 
             // MainForm
             // 

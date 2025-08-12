@@ -47,7 +47,6 @@ namespace PatientRegistrationApp.Forms
                 { "City", txtCity }
             };
         }
-
         private void PopulateFields()
         {
             txtFirstName.Text = Patient.FirstName;
@@ -61,7 +60,6 @@ namespace PatientRegistrationApp.Forms
             txtPostalCode.Text = Patient.PostalCode;
             txtCity.Text = Patient.City;
         }
-
         private void highlightFieldsInError(Dictionary<string, string> generalMessages, Dictionary<string, string> detailedMessages)
         {
             bool IsInGroup1(string fieldKey)
@@ -110,7 +108,6 @@ namespace PatientRegistrationApp.Forms
                 }
             }
         }
-
         private void btnCancel_Click(object sender, EventArgs e)
         {
             this.Close();

@@ -78,7 +78,6 @@ namespace PatientRegistrationApp.Forms
         {
             Application.Restart();
         }
-
         private void searchPatientToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (SearchPatientForm searchPatientForm = new SearchPatientForm(dgvPatients))
@@ -98,12 +97,11 @@ namespace PatientRegistrationApp.Forms
                 }
             }
         }
-
         private void editPatientToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (dgvPatients.CurrentRow != null && dgvPatients.CurrentRow.DataBoundItem is Patient selectedPatient)
             {
-                using (EditPatientForm editForm = new EditPatientForm(LoggedUser, dgvPatients, selectedPatient))
+                using (var editForm = new EditPatientForm(LoggedUser, dgvPatients, selectedPatient))
                 {
                     if (editForm.ShowDialog() == DialogResult.OK)
                     {
@@ -116,13 +114,29 @@ namespace PatientRegistrationApp.Forms
                 MessageBox.Show("Please select a patient to edit.");
             }
         }
-
         private void clearSearchResultsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CurrentPatientsPage = new BindingList<Patient>(Dal.GetAllPatients());
             dgvPatients.DataSource = CurrentPatientsPage;
             IsFiltered = false;
             clearSearchResultsToolStripMenuItem.Enabled = false;
+        }
+        private void deletePatientToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (dgvPatients.CurrentRow != null && dgvPatients.CurrentRow.DataBoundItem is Patient selectedPatient)
+            {
+                using (var deleteForm = new DeleteUser(selectedPatient, dgvPatients, LoggedUser))
+                {
+                    if (deleteForm.ShowDialog() == DialogResult.OK)
+                    {
+                        MessageBox.Show("Patient deleted successfully.");
+                    }
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please select a patient to delete.");
+            }
         }
     }
 }

@@ -70,6 +70,12 @@
     <Compile Include="Forms\ConfirmPatientForm.Designer.cs">
       <DependentUpon>ConfirmPatientForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DeleteUser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DeleteUser.Designer.cs">
+      <DependentUpon>DeleteUser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\EditPatientForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -107,6 +113,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConfirmPatientForm.resx">
       <DependentUpon>ConfirmPatientForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DeleteUser.resx">
+      <DependentUpon>DeleteUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EditPatientForm.resx">
       <DependentUpon>EditPatientForm.cs</DependentUpon>
