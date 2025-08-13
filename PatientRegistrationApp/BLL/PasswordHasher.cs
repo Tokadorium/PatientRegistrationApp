@@ -3,7 +3,6 @@ using System.Security.Cryptography;
 
 namespace PatientRegistrationApp.BLL
 {
-    // not my code tbh
     public static class PasswordHasher
     {
         private const int SaltSize = 16; // 128 bits

@@ -124,9 +124,9 @@ namespace PatientRegistrationApp.DAL
                 conn.Open();
                 string query = @"
                     INSERT INTO Users 
-                        (Username, PasswordHash, FirstName, LastName, Email, MetaData, FailedAttempts, LockedUntil)
+                        (Username, PasswordHash, FirstName, LastName, Email, MetaData, FailedAttempts, LockedUntil, UserRole)
                     VALUES 
-                        (@Username, @PasswordHash, @FirstName, @LastName, @Email, @MetaData, @FailedAttempts, @LockedUntil)";
+                        (@Username, @PasswordHash, @FirstName, @LastName, @Email, @MetaData, @FailedAttempts, @LockedUntil, @UserRole)";
 
                 using (var cmd = new SqlCommand(query, conn))
                 {
@@ -137,7 +137,7 @@ namespace PatientRegistrationApp.DAL
                     cmd.Parameters.AddWithValue("@Email", user.Email ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@MetaData", user.MetaData ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@FailedAttempts", user.FailedAttempts);
-                    // cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
+                    cmd.Parameters.AddWithValue("@UserRole", user.UserRole ?? (object)DBNull.Value);
                     cmd.Parameters.AddWithValue("@LockedUntil", user.LockedUntil ?? (object)DBNull.Value);
 
                     int rowsAffected = cmd.ExecuteNonQuery();
