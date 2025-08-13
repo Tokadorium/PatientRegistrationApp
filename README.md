@@ -46,6 +46,7 @@
   - **User:**  
     Username: `user`  
     Password: `user123`
+  - **All main operations (adding, editing, searching, and deleting patients) are performed via the tool strip menu in the main application window.**
 
 ## Troubleshooting
 - If you can not generate patients ensure to relaunch Visual Studio again after setting `DB_CONN_STR`
