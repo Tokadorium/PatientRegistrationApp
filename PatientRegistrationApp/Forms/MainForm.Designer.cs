@@ -76,7 +76,7 @@
             this.systemToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(9, 5);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(246, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(126, 24);
             this.menuStrip1.Stretch = false;
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
@@ -96,35 +96,35 @@
             // searchPatientToolStripMenuItem
             // 
             this.searchPatientToolStripMenuItem.Name = "searchPatientToolStripMenuItem";
-            this.searchPatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.searchPatientToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.searchPatientToolStripMenuItem.Text = "Search patient";
             this.searchPatientToolStripMenuItem.Click += new System.EventHandler(this.searchPatientToolStripMenuItem_Click);
             // 
             // clearSearchResultsToolStripMenuItem
             // 
             this.clearSearchResultsToolStripMenuItem.Name = "clearSearchResultsToolStripMenuItem";
-            this.clearSearchResultsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.clearSearchResultsToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.clearSearchResultsToolStripMenuItem.Text = "Clear search results";
             this.clearSearchResultsToolStripMenuItem.Click += new System.EventHandler(this.clearSearchResultsToolStripMenuItem_Click);
             // 
             // editPatientToolStripMenuItem
             // 
             this.editPatientToolStripMenuItem.Name = "editPatientToolStripMenuItem";
-            this.editPatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.editPatientToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.editPatientToolStripMenuItem.Text = "Edit patient";
             this.editPatientToolStripMenuItem.Click += new System.EventHandler(this.editPatientToolStripMenuItem_Click);
             // 
             // addPatientToolStripMenuItem
             // 
             this.addPatientToolStripMenuItem.Name = "addPatientToolStripMenuItem";
-            this.addPatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.addPatientToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.addPatientToolStripMenuItem.Text = "Add patient";
             this.addPatientToolStripMenuItem.Click += new System.EventHandler(this.addPatientToolStripMenuItem_Click);
             // 
             // deletePatientToolStripMenuItem
             // 
             this.deletePatientToolStripMenuItem.Name = "deletePatientToolStripMenuItem";
-            this.deletePatientToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.deletePatientToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.deletePatientToolStripMenuItem.Text = "Delete patient";
             this.deletePatientToolStripMenuItem.Click += new System.EventHandler(this.deletePatientToolStripMenuItem_Click);
             // 
