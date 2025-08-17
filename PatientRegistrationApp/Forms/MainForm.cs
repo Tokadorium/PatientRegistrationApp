@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -157,12 +157,12 @@ namespace PatientRegistrationApp.Forms
 
 #if DEBUG
                 if (toUnload.Count > 0)
-                    Console.WriteLine($"Unloading previous pages: {string.Join(", ", toUnload)}");
+                    Console.WriteLine($"Unloading pages: {string.Join(", ", toUnload)}");
 #endif
 
                 foreach (var page in toUnload)
                 {
-                    int startIndex = (page - _firstLoadedPage) * pageSize;
+                    int startIndex = page * pageSize;
                     if (startIndex < 0 || startIndex >= _currentPatientsPage.Count)
                         continue;
 
@@ -196,12 +196,12 @@ namespace PatientRegistrationApp.Forms
 
 #if DEBUG
                 if (toUnload.Count > 0)
-                    Console.WriteLine($"Unloading next pages: {string.Join(", ", toUnload)}");
+                    Console.WriteLine($"Unloading pages: {string.Join(", ", toUnload)}");
 #endif
 
                 foreach (var page in toUnload)
                 {
-                    int startIndex = (page - _firstLoadedPage) * PageSize;
+                    int startIndex = page * PageSize;
                     if (startIndex < 0 || startIndex >= _currentPatientsPage.Count)
                         continue;
 
