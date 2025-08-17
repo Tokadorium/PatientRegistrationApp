@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -11,7 +12,7 @@ namespace PatientRegistrationApp.Forms
 {
     public partial class MainForm : Form
     {
-        private const int PageSize = 200;
+        private const int PageSize = 500;
         private const int ScrollTimerInterval = 200;
 
         private readonly User _loggedUser;
@@ -22,6 +23,7 @@ namespace PatientRegistrationApp.Forms
         private bool _isFiltered = false;
         private DateTime _lastScrollTime = DateTime.MinValue;
         private SemaphoreSlim _semaphoreLoading = new SemaphoreSlim(1, 1);
+        private int _firstLoadedPage = 0;
 
         public MainForm(User loggedUser)
         {
@@ -37,6 +39,7 @@ namespace PatientRegistrationApp.Forms
             //dgvPatients.DataSource = _currentPatientsPage;
             _currentPatientsPage = new BindingList<Patient>(_dal.GetPatientsPage(0, PageSize));
             dgvPatients.DataSource = _currentPatientsPage;
+            _firstLoadedPage = 0;
             _loadedPages.Add(0);
         }
 
@@ -55,7 +58,7 @@ namespace PatientRegistrationApp.Forms
             if (firstIndex < 0)
                 return 0;
 
-            return firstIndex / PageSize;
+            return _firstLoadedPage + firstIndex / PageSize;
         }
 
         private bool IsPageVisible(int pageNumber, int pageSize = PageSize)
@@ -90,56 +93,147 @@ namespace PatientRegistrationApp.Forms
             }
         }
 
-        private async void LoadPage(int pageNumber, int pageSize = PageSize)
+        private async Task LoadPageAsync(int pageNumber, int pageSize = PageSize)
         {
             if (_loadedPages.Contains(pageNumber)) return;
-
-            _semaphoreLoading.Wait();
 
             var nextPatients = await Task.Run(() =>
                 new BindingList<Patient>(_dal.GetPatientsPage(pageNumber * pageSize, pageSize))
             );
 
-            foreach (var patient in nextPatients)
+            await _semaphoreLoading.WaitAsync();
+            try
             {
-                _currentPatientsPage.Add(patient);
+                if (_loadedPages.Contains(pageNumber)) return;
+
+                if (pageNumber > _firstLoadedPage) // append at bottom
+                {
+                    foreach (var p in nextPatients)
+                        _currentPatientsPage.Add(p);
+                }
+                else // prepend at top
+                {
+                    for (int i = nextPatients.Count - 1; i >= 0; i--)
+                        _currentPatientsPage.Insert(0, nextPatients[i]);
+
+                    // keep the loaded range correct
+                    _firstLoadedPage = pageNumber;
+                }
+
+                _loadedPages.Add(pageNumber);
             }
-
-            _loadedPages.Add(pageNumber);
-
-            _semaphoreLoading.Release();
+            finally
+            {
+                _semaphoreLoading.Release();
+            }
         }
 
-        private async Task UnloadUnusedPages(int pageSize = PageSize)
+        private List<int> GetUnusedPagesList()
         {
-            _semaphoreLoading.Wait();
+            List<int> unusedPages = new List<int>();
 
             foreach (var page in _loadedPages)
             {
-                if (IsPageVisible(page)) continue;
-
-                for (var i = page; i < page + pageSize; i++)
+                if (!IsPageVisible(page))
                 {
-                    _currentPatientsPage.RemoveAt(i);
+                    unusedPages.Add(page);
                 }
-
-                _loadedPages.Remove(page);
             }
 
-            _semaphoreLoading.Release();
+            return unusedPages;
+        }
+
+        private async Task UnloadPrevPagesAsync(int pageSize = PageSize)
+        {
+            await _semaphoreLoading.WaitAsync();
+            try
+            {
+                int currentPage = GetCurrentPageNumber();
+
+                var toUnload = GetUnusedPagesList()
+                    .Where(p => p < currentPage)
+                    .OrderByDescending(p => p) // avoid index shifts
+                    .ToList();
+
+#if DEBUG
+                if (toUnload.Count > 0)
+                    Console.WriteLine($"Unloading previous pages: {string.Join(", ", toUnload)}");
+#endif
+
+                foreach (var page in toUnload)
+                {
+                    int startIndex = (page - _firstLoadedPage) * pageSize;
+                    if (startIndex < 0 || startIndex >= _currentPatientsPage.Count)
+                        continue;
+
+                    int countToRemove = Math.Min(pageSize, _currentPatientsPage.Count - startIndex);
+                    for (int i = 0; i < countToRemove; i++)
+                        _currentPatientsPage.RemoveAt(startIndex);
+
+                    _loadedPages.Remove(page);
+                }
+
+                if (_loadedPages.Count > 0)
+                    _firstLoadedPage = _loadedPages.Min();
+            }
+            finally
+            {
+                _semaphoreLoading.Release();
+            }
+        }
+
+        private async Task UnloadNextPagesAsync(int pageSize = PageSize)
+        {
+            await _semaphoreLoading.WaitAsync();
+            try
+            {
+                int currentPage = GetCurrentPageNumber();
+
+                var toUnload = GetUnusedPagesList()
+                    .Where(p => p > currentPage)
+                    .OrderByDescending(p => p)
+                    .ToList();
+
+#if DEBUG
+                if (toUnload.Count > 0)
+                    Console.WriteLine($"Unloading next pages: {string.Join(", ", toUnload)}");
+#endif
+
+                foreach (var page in toUnload)
+                {
+                    int startIndex = (page - _firstLoadedPage) * PageSize;
+                    if (startIndex < 0 || startIndex >= _currentPatientsPage.Count)
+                        continue;
+
+                    int countToRemove = Math.Min(PageSize, _currentPatientsPage.Count - startIndex);
+                    for (int i = 0; i < countToRemove; i++)
+                        _currentPatientsPage.RemoveAt(startIndex);
+
+                    _loadedPages.Remove(page);
+                }
+            }
+            finally
+            {
+                _semaphoreLoading.Release();
+            }
         }
 
         private async void HandleScroll()
         {
+            // skip if another scroll operation is in progress
+            if (!_semaphoreLoading.Wait(0))
+                return;
+            _semaphoreLoading.Release();
+
             if (GetScrollPositionPercent() > 70)
             {
-                LoadPage(GetCurrentPageNumber() + 1);   // load next page
-                //UnloadUnusedPages();
+                await LoadPageAsync(GetCurrentPageNumber() + 1);
+                //await UnloadPrevPagesAsync();
             }
-            if (GetScrollPositionPercent() < 30 && GetCurrentPageNumber() > 0)
+            else if (GetScrollPositionPercent() < 30 && GetCurrentPageNumber() > 0)
             {
-                LoadPage(GetCurrentPageNumber() - 1);   // load prev page
-                //UnloadUnusedPages();
+                await LoadPageAsync(GetCurrentPageNumber() - 1);
+                //await UnloadNextPagesAsync();
             }
 
 #if DEBUG
